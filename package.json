@@ -1,0 +1,50 @@
+{
+  "name": "object-editor-react",
+  "version": "0.1.0",
+  "description": "A React-based JSON object editor",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/b-gran/object-editor-react.git"
+  },
+  "author": "Bill Granfield <bill@billgranfield.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/b-gran/object-editor-react/issues"
+  },
+  "homepage": "https://github.com/b-gran/object-editor-react#readme",
+  "devDependencies": {
+    "async": "^2.0.1",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0",
+    "chalk": "^1.1.3",
+    "del": "^2.2.2",
+    "envify": "^3.4.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-cached": "^1.1.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-size": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "run-sequence": "^1.2.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  },
+  "peerDependencies": {
+    "react": "^15.3.2"
+  },
+  "dependencies": {
+    "lodash": "^4.16.1"
+  }
+}
