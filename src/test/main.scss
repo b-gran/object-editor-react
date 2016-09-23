@@ -1,0 +1,23 @@
+.editor.editor--outside {
+  width: 1000px;
+  margin: 50px auto;
+  background: #EEE;
+  padding: 25px;
+  position: relative;
+  border: 1px solid black;
+}
+
+.editor.editor--inside {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  width: 300px;
+  background: #EEE;
+  padding: 25px;
+  border: 1px solid black;
+}
+
+.object-cell {
+  position: relative;
+}

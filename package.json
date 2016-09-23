@@ -42,9 +42,12 @@
     "watchify": "^3.7.0"
   },
   "peerDependencies": {
-    "react": "^15.3.2"
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2"
   },
   "dependencies": {
-    "lodash": "^4.16.1"
+    "classnames": "^2.2.5",
+    "lodash": "^4.16.1",
+    "react-addons-update": "^15.3.2"
   }
 }
