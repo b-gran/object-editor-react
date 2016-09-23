@@ -11,6 +11,13 @@ const schema = {
     bar: Schema.SchemaTypes.number(),
     baz: {
         biz: Schema.SchemaTypes.number(),
+        boz: Schema.SchemaTypes.number(),
+
+        booz: {
+            barz: {
+                nested: Schema.SchemaTypes.number(),
+            }
+        }
     },
 };
 
