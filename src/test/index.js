@@ -6,9 +6,11 @@ import { ObjectEditor, ArrayEditor } from '../Editor';
 import { PropTypes } from '../constants';
 
 import update from 'react-addons-update';
+import _ from 'lodash';
 
 const empty = () => null;
 
+// A deeply nested test schema
 const schema = {
     foo: Schema.SchemaTypes.string({ required: true }),
     bar: Schema.SchemaTypes.number(),
@@ -24,8 +26,8 @@ const schema = {
     },
 };
 
+// Sets the element at idx to updated
 function updateArray (updated, idx) {
-    console.log('args', arguments);
     this.setState({
         object: update(
             this.state.object,
@@ -38,35 +40,56 @@ function updateArray (updated, idx) {
     })
 };
 
+// A test wrapper around Editor that keeps track of state
 class Wrapper extends React.Component {
     static displayName = 'Wrapper';
 
     static propTypes = {
+        // Initial object to edit
         initialObject: React.PropTypes.any.isRequired,
+
+        // Schema to use
         type: PropTypes.Schema.isRequired,
 
+        // [optional] handler to use when the object is updated
         onUpdate: React.PropTypes.func,
     };
 
     constructor (props) {
         super(props);
 
+        // Initialize state to empty object
         this.state = {
             object: props.initialObject
         };
 
+        // If update handler was specified in props, use that -- otherwise,
+        // use the function updateArray
         this.change = (this.props.onUpdate && this.props.onUpdate.bind(this)) ||
                 updateArray.bind(this);
     }
 
 
+    // Handler called when a new object is added.
+    // Just adds the object to the end of the array.
     add = newObject => {
-        console.log('adding', newObject);
         this.setState({ object: [ ...this.state.object, newObject ]});
         return true;
     };
 
+    // Handler called when an element is removed.
+    remove = (removedObject, removedIndex) => {
+        this.setState({
+            object: _.reject(
+                this.state.object,
+                (__, idx) => idx === removedIndex
+            )
+        });
+    };
+
     render () {
+        // Choose between object and array components based on whether
+        // the object in state is an array.
         const EditorComponent = Array.isArray(this.state.object)
             ? ArrayEditor
             : ObjectEditor;
@@ -79,7 +102,7 @@ class Wrapper extends React.Component {
                 type={this.props.type}
                 onUpdateElement={this.change}
                 onAddElement={this.add}
-                onRemoveElement={empty} />
+                onRemoveElement={this.remove} />
 
             <p>
                 { JSON.stringify(this.state.object, null, '\t')}
