@@ -164,7 +164,7 @@ class ArrayEditor extends React.Component {
                             type={this.props.type}
                             object={el}
                             onChange={updated => this.props.onUpdateElement(updated, idx)}
-                            onRemove={empty} />
+                            onRemove={() => this.props.onRemoveElement(el, idx)} />
                     )
                 }
 
@@ -393,6 +393,11 @@ const ElementRow = props => {
         ));
     };
 
+    // The trash button (if the consumer didn't specify one)
+    const trashButton = (
+        <button onClick={props.onRemove}>Trash</button>
+    );
+
     return (
         <tr>
             <td>
@@ -430,7 +435,7 @@ const ElementRow = props => {
                 {
                     props.trash
                         ? props.trash()
-                        : 'trash'
+                        : trashButton
                 }
                 {/*<Icon*/}
                     {/*which="trash"*/}
@@ -454,8 +459,15 @@ ElementRow.propTypes = {
     // The element itself (should have the type `type`)
     object: React.PropTypes.any,
 
-    // Handlers for updating/removing the element
+    // Handler called when the element is updated
+    //
+    // function onChange (updatedElement: Object) -> void
     onChange: React.PropTypes.func.isRequired,
+
+    // Handler called when the user clicks the remove button
+    // Called with no arguments
+    //
+    // function onRemove () -> void
     onRemove: React.PropTypes.func.isRequired,
 };
 
