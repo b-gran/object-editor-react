@@ -161,4 +161,69 @@ describe('support functions', () => {
             done();
         });
     });
+
+    describe('validateSchema()', () => {
+        it('should return null for a valid schema', done => {
+            const valid = [
+                {
+                    foo: Schema.SchemaTypes.string({ required: true }),
+                    bar: Schema.SchemaTypes.number(),
+                    baz: {
+                        biz: Schema.SchemaTypes.number(),
+                        boz: Schema.SchemaTypes.number(),
+
+                        booz: {
+                            barz: {
+                                nested: Schema.SchemaTypes.number(),
+                            }
+                        }
+                    },
+                },
+
+                Schema.SchemaTypes.any()
+            ];
+
+            valid.forEach(
+                schema => {
+                    expect(Schema.validateSchema(schema)).to.be.null;
+                }
+            );
+
+            done();
+        });
+
+        it('should throw for an invalid schema', done => {
+            const invalid = [
+                {
+                    foo: Schema.SchemaTypes.string({ required: true }),
+                    bar: 'this one breaks the schema',
+                    baz: {
+                        biz: Schema.SchemaTypes.number(),
+                        boz: Schema.SchemaTypes.number(),
+
+                        booz: {
+                            barz: {
+                                nested: Schema.SchemaTypes.number(),
+                            }
+                        }
+                    },
+                },
+
+                'just a string',
+
+                {},
+
+                undefined,
+                null
+            ];
+
+            invalid.forEach(
+                schema => {
+                    expect(() => Schema.validateSchema(schema)).to.throw(Error)
+                }
+            );
+
+            done();
+        })
+    });
 });
