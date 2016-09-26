@@ -78,6 +78,7 @@ class ObjectEditor extends React.Component {
                     { /* Object is just an individual object, so there's only one row */ }
                     <ElementRow
                         icon={this.props.icon || undefined}
+                        trash={empty /* no trash button for single objects */}
                         type={this.props.type}
                         object={this.props.object}
                         onChange={this.props.onUpdateElement}
@@ -167,19 +168,93 @@ class ArrayEditor extends React.Component {
                     )
                 }
 
+                <AddObjectRow
+                    type={this.props.type}
+                    onAddElement={this.props.onAddElement}
+                    onError={empty} />
+
                 </tbody>
             </table>
         );
     }
 };
 
+// A table row for adding a new element to an array
+// TODO: error handling
+class AddObjectRow extends React.Component {
+    static displayName = 'AddObjectRow';
+
+    static propTypes = {
+        // The schema to to use for creating new element
+        type: PropTypes.Schema.isRequired,
+
+        // Handler called when a new element is added
+        // If this function returns anything truthy, the object row is cleared (so a new object can be added).
+        // If this function returns anything falsey, the object row will not be cleared.
+        //
+        // function onAddElement (newElement: Object) -> boolean
+        onAddElement: React.PropTypes.func.isRequired,
+    };
+
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            // Initialize with empty object
+            object: {}
+        };
+    }
+
+    // Handler called when the "add" button is clicked
+    add = () => {
+        const result = this.props.onAddElement(this.state.object);
+
+        // If consumer returned true, reset fields.
+        if (result) {
+            return this.setState({
+                object: {}
+            });
+        }
+    };
+
+    // Renders the "add element" button
+    addButton = () => {
+        return <button onClick={this.add}>Add</button>;
+    };
+
+    // Handler for updates to the object in state.
+    // Simply sets object equal to the update.
+    updateObject = updated => {
+        this.setState({
+            object: updated
+        });
+    };
+
+    render () {
+        const rowClasses = cx('editor__add-object');
+        return (
+            <ElementRow
+                className={rowClasses}
+                type={this.props.type}
+                icon={empty}
+                trash={this.addButton}
+                object={this.state.object}
+                onChange={this.updateObject}
+                onRemove={empty /* unused by this component */} />
+        );
+    }
+}
+
+// Scrim version of the array editor.
 const ScrimArrayEditor = Scrim(ArrayEditor);
 
+// The primitive types that we'll use <input /> elements for.
+// Other types will get nested object editors.
 const STRING_INPUT_TYPES = [
     'string', 'boolean', 'number', 'date'
 ];
 
-// A td cell for editing a property whose type is anything by object
+// A td cell for editing a property whose type is anything but 'object'
 class StringCell extends React.Component {
     static displayName = 'StringCell';
 
@@ -190,6 +265,7 @@ class StringCell extends React.Component {
         // Current value of this cell
         value: React.PropTypes.any,
 
+        // Handler called when the value is modified
         onChange: React.PropTypes.func.isRequired,
     };
 
@@ -208,6 +284,7 @@ class StringCell extends React.Component {
 }
 
 // A td cell for editing a property of type `object`
+// This cell will spawn nested editors using the scrimmed Editors
 class ObjectCell extends React.Component {
     static displayName = 'ObjectCell';
 
@@ -218,6 +295,7 @@ class ObjectCell extends React.Component {
         // Current value of this cell
         value: React.PropTypes.any,
 
+        // Handler called when the value is modified
         onChange: React.PropTypes.func.isRequired,
     };
 
@@ -247,6 +325,8 @@ class ObjectCell extends React.Component {
             return <div></div>
         }
 
+        // Choose between Array and Object Editors based on whether the value
+        // is itself an array.
         const Editor = Array.isArray(this.props.value)
             ? ScrimArrayEditor
             : ScrimObjectEditor;
@@ -287,6 +367,9 @@ class ObjectCell extends React.Component {
     }
 }
 
+// Render an object as a row in a table.
+// The "icon" prop gets render as the furthest-left td, and the
+// "trash" prop gets render as the furthest-right td.
 const ElementRow = props => {
     // For some key, returns a handler that calls props.onChange with the
     // value of props.object[key].
@@ -315,8 +398,9 @@ const ElementRow = props => {
             <td>
                 {
                     // Icon for the element
-                    (props.icon && props.icon()) ||
-                    <i>C</i>
+                    props.icon
+                        ? props.icon()
+                        : <i>C</i>
                 }
             </td>
 
@@ -343,7 +427,11 @@ const ElementRow = props => {
             }
 
             <td>
-                trash
+                {
+                    props.trash
+                        ? props.trash()
+                        : 'trash'
+                }
                 {/*<Icon*/}
                     {/*which="trash"*/}
                     {/*onClick={empty}/>*/}
@@ -359,6 +447,9 @@ ElementRow.propTypes = {
 
     // Icon to use for the field
     icon: React.PropTypes.func,
+
+    // Content for the trash button cell
+    trash: React.PropTypes.func,
 
     // The element itself (should have the type `type`)
     object: React.PropTypes.any,
