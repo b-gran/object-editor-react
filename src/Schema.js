@@ -132,7 +132,14 @@ export const SchemaTypes = {
      *              .arrayOf(SchemaTypes.string())({ required: true }),
      *      };
      */
-    arrayOf: type => createSchemaType(maybeRequired(isArrayOfType(type)), 'arrayOf')
+    arrayOf: type =>
+        opts => createSchemaType(maybeRequired(isArrayOfType(type)), 'arrayOf')({
+            // User-specified options
+            ...opts,
+
+            // Make the element type available
+            elementType: type,
+        })
 };
 
 // Returns a message for an error caused by an invalid Schema type.

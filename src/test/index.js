@@ -24,6 +24,9 @@ const schema = {
             }
         }
     },
+    test: Schema.SchemaTypes.arrayOf({
+        foo: Schema.SchemaTypes.string()
+    })(),
 };
 
 // Sets the element at idx to updated

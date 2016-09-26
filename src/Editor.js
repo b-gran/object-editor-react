@@ -82,7 +82,7 @@ class ObjectEditor extends React.Component {
                         type={this.props.type}
                         object={this.props.object}
                         onChange={this.props.onUpdateElement}
-                        onRemove={empty} />
+                        onRemove={empty /* Can't remove a single object */} />
 
                 </tbody>
             </table>
@@ -170,8 +170,7 @@ class ArrayEditor extends React.Component {
 
                 <AddObjectRow
                     type={this.props.type}
-                    onAddElement={this.props.onAddElement}
-                    onError={empty} />
+                    onAddElement={this.props.onAddElement} />
 
                 </tbody>
             </table>
@@ -236,7 +235,7 @@ class AddObjectRow extends React.Component {
             <ElementRow
                 className={rowClasses}
                 type={this.props.type}
-                icon={empty}
+                icon={empty /* no icon for the add object row */}
                 trash={this.addButton}
                 object={this.state.object}
                 onChange={this.updateObject}
@@ -325,11 +324,32 @@ class ObjectCell extends React.Component {
             return <div></div>
         }
 
-        // Choose between Array and Object Editors based on whether the value
-        // is itself an array.
-        const Editor = Array.isArray(this.props.value)
+        // Whether or not to use an Array editor
+        const useArrayEditor = (
+            // Use an array editor if the SchemaType is one of the array variants (array or arrayOf)
+            (this.props.type.type && this.props.type.type.match(/array/) !== null) ||
+
+            // Also use one if the value is an array
+            Array.isArray(this.props.value)
+        );
+
+        // The Editor component to use
+        const Editor = useArrayEditor
             ? ScrimArrayEditor
             : ScrimObjectEditor;
+
+        // The type to pass to the editor -- if it's an object editor, that's just the current type.
+        // If it's an array editor, we need to use the array's type.
+        const editorType = useArrayEditor
+            // If we're using an array editor, use the types's own elementType or allow any
+            ? this.props.type.elementType || Schema.SchemaTypes.any
+
+            // Otherwise use the existing type
+            : this.props.type;
+
+
+        // The value to use for array operations -- allows us to have an empty value.
+        const arrayValue = this.props.value || [];
 
         // Cell is open -- render the value editor
         return (
@@ -337,21 +357,29 @@ class ObjectCell extends React.Component {
                 onClickScrim={this.close}
 
                 className='editor--inside'
-                type={this.props.type}
+                type={editorType}
                 object={this.props.value}
                 onUpdateElement={this.props.onChange}
                 onRemoveElement={
+                    // Tell the consumer an element was removed
                     (el, droppedIndex) => this.props.onChange(
+                        // Without mutating the array, reject the dropped index
                         _.reject(
-                            this.props.value,
+                            arrayValue,
                             (__, idx) => idx === droppedIndex
                         )
                     )
                 }
                 onAddElement={
-                    (el) => this.props.onChange(
-                        [ ...this.props.value, el ]
-                    )
+                    (el) => {
+                        // Pass element to consumer
+                        this.props.onChange(
+                            [ ...arrayValue, el ]
+                        );
+
+                        // Clear the nested add row
+                        return true;
+                    }
                 } />
         );
     };
@@ -383,6 +411,7 @@ const ElementRow = props => {
             });
         }
 
+        // Set key = newValue and pass to consumer
         return props.onChange(update(
             props.object,
             {
@@ -437,9 +466,6 @@ const ElementRow = props => {
                         ? props.trash()
                         : trashButton
                 }
-                {/*<Icon*/}
-                    {/*which="trash"*/}
-                    {/*onClick={empty}/>*/}
             </td>
         </tr>
     );
