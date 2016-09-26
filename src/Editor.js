@@ -82,12 +82,6 @@ class ObjectEditor extends React.Component {
     };
 
     render () {
-        console.log('============');
-        console.log('ObjectEditor');
-        console.log(this.props.object);
-        console.log(this.props.type);
-        console.log('============');
-
         return (
             <table className={cx('editor', 'editor--object', this.props.className)}>
                 <thead>
@@ -145,12 +139,6 @@ class ArrayEditor extends React.Component {
     };
 
     render () {
-        console.log('============');
-        console.log('ArrayEditor');
-        console.log(this.props.object);
-        console.log(this.props.type);
-        console.log('============');
-
         return (
             <table className={cx('editor', 'editor--array', this.props.className)}>
                 <thead>
@@ -333,7 +321,6 @@ const ElementRow = props => {
                                     }
                                 )
                             )} />;
-                        // onChange={props.onChange} />;
                     }
                 )
             }
