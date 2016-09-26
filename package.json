@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "A React-based JSON object editor",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+      "test": "mocha src/test/mocha --compilers js:babel-core/register"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/b-gran/object-editor-react.git"
