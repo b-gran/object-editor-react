@@ -18,6 +18,45 @@ export function isSomething (test) {
     return typeof test !== 'undefined';
 }
 
+// Returns true if `test` is an array
+export function isArray (test) {
+    return Array.isArray(test);
+}
+
+// Returns true if predicate returns true for all elements in the array.
+// predicate is called with three arguments:
+//      function predicate (currentElement, currentIndex, array)
+export function every (array, predicate) {
+    // Make sure it's an array
+    if (!Array.isArray(array)) {
+        throw new Error(
+            `Expected "array" to be an Array, but got ${Object.prototype.toString.call(array)}`
+        );
+    }
+
+    // Test predicate on every element in the array.
+    return array.reduce(
+        (memo, el, idx) => {
+            return memo && predicate(el, idx, array);
+        },
+        true
+    );
+}
+
+// Returns a function that returns true if
+// `test` is an array whose objects match the schema `type`
+export function isArrayOfType (type) {
+    return function (test) {
+        return (
+            Array.isArray(test) &&
+            every(
+                test,
+                el => matchesSchema(type, el)
+            )
+        );
+    };
+}
+
 // Returns a function that accepts a validator and returns a function
 // that takes a boolean and returns a function that takes a variable
 // and validates the variables under the following constraints:
@@ -26,7 +65,7 @@ export function isSomething (test) {
 //
 // Usage:
 //
-//      const maybeValidateString = maybeRequired(str => typeof str === 'string';
+//      const maybeValidateString = maybeRequired(str => typeof str === 'string');
 //
 //      const validateString = maybeValidateString(true);
 //      console.log(validateString('foo')); // true
@@ -68,28 +107,32 @@ const createSchemaType = (maybeValidate, type) => {
         type,
         opts
     );
-    /*
-    return function SchemaType (opts = {}) {
-        const func = maybeValidate(!!opts.required);
-        func.__proto__ = {
-            isSchemaType: true,
-            type,
-            ...opts
-        };
-
-        return func;
-    };
-    */
 };
 
 export const SchemaTypes = {
     any: createSchemaType(maybeRequired(isSomething), 'any'),
+
     string: createSchemaType(maybeRequired(typeValidator('string')), 'string'),
     boolean: createSchemaType(maybeRequired(typeValidator('boolean')), 'boolean'),
-    object: createSchemaType(maybeRequired(isObject), 'object'),
     function: createSchemaType(maybeRequired(typeValidator('function')), 'function'),
     number: createSchemaType(maybeRequired(typeValidator('number')), 'number'),
-    date: createSchemaType(maybeRequired(isValidDate), 'date')
+    date: createSchemaType(maybeRequired(isValidDate), 'date'),
+
+    array: createSchemaType(maybeRequired(isArray), 'array'),
+    object: createSchemaType(maybeRequired(isObject), 'object'),
+
+    /*
+     * Usage:
+     *      const schema = {
+     *          foo: SchemaTypes.arrayOf({
+     *              bar: SchemaTypes.string,
+     *          })(),
+     *
+     *          bar: SchemaTypes
+     *              .arrayOf(SchemaTypes.string())({ required: true }),
+     *      };
+     */
+    arrayOf: type => createSchemaType(maybeRequired(isArrayOfType(type)), 'arrayOf')
 };
 
 // Returns a message for an error caused by an invalid Schema type.
@@ -112,7 +155,7 @@ export function validateSchema (schema, location = '') {
     }
 
     // Schema is an object -- test each key at this level of the schema
-    if (typeof schema === 'object') {
+    if (typeof schema === 'object' && Object.keys(schema).length > 0) {
         Object
             .keys(schema)
             .forEach(
@@ -125,4 +168,43 @@ export function validateSchema (schema, location = '') {
 
     // Schema is bad
     throw new Error(invalidSchemaMessage(schema, location));
+}
+
+// Returns true if test is a valid match for schema.
+// Schema must be a valid schema (has SchemaTypes in leaves)
+// This function just does some validation and then passes control
+// to the recursive function, matchesSchemaInner.
+export function matchesSchema (schema, test) {
+    // Throw if the schema is bad.
+    try {
+        validateSchema(schema);
+    } catch (err) {
+        throw new Error('Expected "schema" to be a valid schema');
+    }
+
+    // Pass control to rec function
+    return matchesSchemaInner(schema, test);
+}
+
+// Recursively make sure that `test` is a valid instance of `schema`
+function matchesSchemaInner (schema, test) {
+    // Base case: SchemaType leaf
+    // Just evaluate directly
+    if (schema.isSchemaType) {
+        return schema(test);
+    }
+
+    // We already know schema is a valid schema, so we can go ahead
+    // and evaluate it as an object.
+
+    // Object case
+    // True if each key of test matches each key of schema
+    return Object.keys(schema)
+        .map(
+            key => matchesSchemaInner(schema[key], test && test[key])
+        )
+        .reduce(
+            (memo, match) => memo && match,
+            true
+        );
 }

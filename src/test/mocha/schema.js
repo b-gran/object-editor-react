@@ -67,7 +67,7 @@ describe('support functions', () => {
         it('should have the same behavior as Array.isArray for all types', done => {
             const values = [
                 ...testBasicPrimitives,
-                [ 1, 2, 3 ],
+                [1, 2, 3],
                 NaN,
                 [],
                 new Array(10),
@@ -93,7 +93,7 @@ describe('support functions', () => {
             const nonObjects = [
                 new Date(),
                 NaN,
-                [ 1, 2, 3 ],
+                [1, 2, 3],
                 new Buffer('foo'),
                 undefined,
                 null,
@@ -107,19 +107,19 @@ describe('support functions', () => {
 
     describe('every()', () => {
         it('should return true for basic cases', done => {
-            expect(Schema.every([ true, true, true, true, 1 ], Boolean)).to.be.true;
-            expect(Schema.every([ 1, 2, 3, 4, 5 ], num => num < 6)).to.be.true;
+            expect(Schema.every([true, true, true, true, 1], Boolean)).to.be.true;
+            expect(Schema.every([1, 2, 3, 4, 5], num => num < 6)).to.be.true;
             done();
         });
 
         it('should return false for basic cases ', done => {
-            expect(Schema.every([ true, true, true, true, 0 ], Boolean)).to.be.false;
-            expect(Schema.every([ 1, 2, 3, 4, 5, 6 ], num => num < 6)).to.be.false;
+            expect(Schema.every([true, true, true, true, 0], Boolean)).to.be.false;
+            expect(Schema.every([1, 2, 3, 4, 5, 6], num => num < 6)).to.be.false;
             done();
         });
 
         it('should pass the correct parameters to predicate', done => {
-            const array = [ 0, 1, 2, 3 ];
+            const array = [0, 1, 2, 3];
             Schema.every(
                 array,
                 (current, index, entireArray) => {
@@ -225,5 +225,185 @@ describe('support functions', () => {
 
             done();
         })
+    });
+
+    describe('matchesSchema()', () => {
+        const schema = {
+            foo: Schema.SchemaTypes.string({ required: true }),
+            bar: Schema.SchemaTypes.number(),
+            baz: {
+                biz: Schema.SchemaTypes.number(),
+                boz: Schema.SchemaTypes.number(),
+
+                booz: {
+                    barz: {
+                        nested: Schema.SchemaTypes.number(),
+                    }
+                }
+            },
+        };
+
+        it('should return true when the test matches', done => {
+            const tests = [
+                {
+                    foo: 'string',
+                    bar: 1,
+                    baz: {
+                        biz: 1,
+                        boz: 1,
+
+                        booz: {
+                            barz: {
+                                nested: 1,
+                            }
+                        }
+                    },
+                },
+                {
+                    foo: 'string'
+                }
+            ];
+
+            tests.forEach(
+                test => {
+                    expect(Schema.matchesSchema(schema, test)).to.be.true;
+                }
+            );
+
+            done();
+        });
+
+        it('should return false when the test fails', done => {
+            const tests = [
+                {
+                    foo: 'string',
+                    bar: 'string',
+                    baz: {
+                        biz: NaN,
+                        boz: 1,
+
+                        booz: {
+                            barz: {
+                                nested: 1,
+                            }
+                        }
+                    },
+                },
+                {
+                    foo: 1,
+                },
+                {
+                    foo: null,
+                },
+                {},
+                1,
+                undefined,
+            ];
+
+            tests.forEach(
+                test => {
+                    expect(Schema.matchesSchema(schema, test)).to.be.false;
+                }
+            );
+
+            done();
+        });
+    });
+
+    describe('isArrayOfType()', done => {
+        const schema = {
+            foo: Schema.SchemaTypes.string({ required: true }),
+            bar: Schema.SchemaTypes.number(),
+            baz: {
+                biz: Schema.SchemaTypes.number(),
+                boz: Schema.SchemaTypes.number(),
+
+                booz: {
+                    barz: {
+                        nested: Schema.SchemaTypes.number(),
+                    }
+                }
+            },
+        };
+
+        it('should return true when each element matches the schema', done => {
+            const tests = [
+                {
+                    foo: 'string',
+                    bar: 1,
+                    baz: {
+                        biz: 1,
+                        boz: 1,
+
+                        booz: {
+                            barz: {
+                                nested: 1,
+                            }
+                        }
+                    },
+                },
+                {
+                    foo: 'string'
+                }
+            ];
+
+            expect(Schema.isArrayOfType(schema)(tests)).to.be.true;
+
+            done();
+        });
+
+        it("should return false when an element doesn't match the schema", done => {
+            const tests = [
+                {
+                    foo: 'string',
+                    bar: 1,
+                    baz: {
+                        biz: 1,
+                        boz: 1,
+
+                        booz: {
+                            barz: {
+                                nested: 1,
+                            }
+                        }
+                    },
+                },
+                {
+                    foo: 'string'
+                },
+                {
+                    foo: 'string',
+                    bar: 'string',
+                    baz: {
+                        biz: NaN,
+                        boz: 1,
+
+                        booz: {
+                            barz: {
+                                nested: 1,
+                            }
+                        }
+                    },
+                },
+                {
+                    foo: 1,
+                },
+                {
+                    foo: null,
+                },
+                {},
+                1,
+                undefined,
+            ];
+
+            expect(Schema.isArrayOfType(schema)(tests)).to.be.false;
+
+            done();
+        });
+
+        it('should return false if a non-array is passed', done => {
+            expect(Schema.isArrayOfType(schema)(0)).to.be.false;
+            done();
+        });
     });
 });
