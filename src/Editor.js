@@ -23,46 +23,7 @@ const BASE_EDITOR_PROPTYPES = {
     // Optional.
     // A function that returns a react node to use for the icon
     icon: React.PropTypes.func,
-
-    // Handler called when one of the elements is modified
-    //
-    // function onUpdateElement (element, index) -> void
-    // where `index` is the index
-    onUpdateElement: React.PropTypes.func.isRequired,
-
-    // Handler called when one of the elements is removed
-    onRemoveElement: React.PropTypes.func.isRequired,
-
-    // Handler called when a new element is added
-    onAddElement: React.PropTypes.func.isRequired,
 };
-
-// General Editor component that selects from Array and
-// single Object Editor variants.
-class Editor extends React.Component {
-    static displayName = 'Editor';
-
-    static propTypes = {
-        ...BASE_EDITOR_PROPTYPES,
-
-        // The thing to edit. Can be any type (or undefined)
-        object: React.PropTypes.any,
-    };
-
-    constructor (props) {
-        super(props);
-    }
-
-    render () {
-        const EditorComponent = Array.isArray(this.props.object)
-            ? ArrayEditor
-            : ObjectEditor;
-
-        return (
-            <EditorComponent { ...this.props } />
-        )
-    }
-}
 
 // A tabular editor for editing a single JSON object
 class ObjectEditor extends React.Component {
@@ -72,9 +33,14 @@ class ObjectEditor extends React.Component {
         ...BASE_EDITOR_PROPTYPES,
 
         // The thing to edit. Can be either
-        // * an object
+        // * an object with shape specified in type
         // * undefined
         object: React.PropTypes.object,
+
+        // Handler called when the object is updated
+        // function onUpdateElement (updatedObject) -> void
+        // updatedObject is the current object with updates applied
+        onUpdateElement: React.PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -121,7 +87,9 @@ class ObjectEditor extends React.Component {
             </table>
         );
     }
-}
+};
+
+const ScrimObjectEditor = Scrim(ObjectEditor);
 
 // A tabular editor for editing an array of JSON objects in real time
 class ArrayEditor extends React.Component {
@@ -130,8 +98,29 @@ class ArrayEditor extends React.Component {
     static propTypes = {
         ...BASE_EDITOR_PROPTYPES,
 
-        // The thing to edit. Can be any type (or undefined)
+        // The thing to edit. Must be either
+        // * an array of the objects with shape specified in type
+        // * undefined
         object: React.PropTypes.array,
+
+        // Handler called when one of the elements in object is modified
+        //
+        // function onUpdateElement (updatedElement: Object, index: Number) -> void
+        // where updatedElement is the element that has been updated, and
+        // index is the index of updatedElement in the the object prop
+        onUpdateElement: React.PropTypes.func.isRequired,
+
+        // Handler called when one of the elements is removed
+        //
+        // function onUpdateElement (removedElement: Object, index: Number) -> void
+        // where removedElement is the element that has been removed, and
+        // index is the index of removedElement in the the object prop
+        onRemoveElement: React.PropTypes.func.isRequired,
+
+        // Handler called when a new element is added
+        // function onAddElement (newElement: Object) -> void
+        // where newElement is the element to add
+        onAddElement: React.PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -182,7 +171,9 @@ class ArrayEditor extends React.Component {
             </table>
         );
     }
-}
+};
+
+const ScrimArrayEditor = Scrim(ArrayEditor);
 
 const STRING_INPUT_TYPES = [
     'string', 'boolean', 'number', 'date'
@@ -215,8 +206,6 @@ class StringCell extends React.Component {
         );
     }
 }
-
-const ScrimEditor = Scrim(Editor);
 
 // A td cell for editing a property of type `object`
 class ObjectCell extends React.Component {
@@ -258,17 +247,32 @@ class ObjectCell extends React.Component {
             return <div></div>
         }
 
+        const Editor = Array.isArray(this.props.value)
+            ? ScrimArrayEditor
+            : ScrimObjectEditor;
+
         // Cell is open -- render the value editor
         return (
-            <ScrimEditor
+            <Editor
                 onClickScrim={this.close}
 
                 className='editor--inside'
                 type={this.props.type}
                 object={this.props.value}
                 onUpdateElement={this.props.onChange}
-                onRemoveElement={empty}
-                onAddElement={empty} />
+                onRemoveElement={
+                    (el, droppedIndex) => this.props.onChange(
+                        _.reject(
+                            this.props.value,
+                            (__, idx) => idx === droppedIndex
+                        )
+                    )
+                }
+                onAddElement={
+                    (el) => this.props.onChange(
+                        [ ...this.props.value, el ]
+                    )
+                } />
         );
     };
 
@@ -284,6 +288,28 @@ class ObjectCell extends React.Component {
 }
 
 const ElementRow = props => {
+    // For some key, returns a handler that calls props.onChange with the
+    // value of props.object[key].
+    // Support null/undefined objects.
+    const getChangeHandler = key => newValue => {
+        // Element doesn't have a value at this key yet
+        // So create an object with this key
+        if (!props.object) {
+            return props.onChange({
+                [key]: newValue
+            });
+        }
+
+        return props.onChange(update(
+            props.object,
+            {
+                [key]: {
+                    $set: newValue
+                }
+            }
+        ));
+    };
+
     return (
         <tr>
             <td>
@@ -311,16 +337,7 @@ const ElementRow = props => {
                         return <CellType
                             type={props.type[key]}
                             value={value}
-                            onChange={newValue => props.onChange(
-                                update(
-                                    props.object,
-                                    {
-                                        [key]: {
-                                            $set: newValue
-                                        }
-                                    }
-                                )
-                            )} />;
+                            onChange={getChangeHandler(key)} />
                     }
                 )
             }
@@ -351,4 +368,4 @@ ElementRow.propTypes = {
     onRemove: React.PropTypes.func.isRequired,
 };
 
-export default Editor;
+export { ObjectEditor, ArrayEditor };
