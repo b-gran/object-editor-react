@@ -200,18 +200,25 @@ class AddObjectRow extends React.Component {
 
         this.state = {
             // Initialize with empty object
-            object: {}
+            object: null,
         };
     }
 
     // Handler called when the "add" button is clicked
+    // Only pass to consumer if state is non-null -- user needs to enter something
+    // before they can add additional elements.
     add = () => {
+        // Nothing entered in fields yet
+        if (this.state.object === null) {
+            return;
+        }
+
         const result = this.props.onAddElement(this.state.object);
 
         // If consumer returned true, reset fields.
         if (result) {
             return this.setState({
-                object: {}
+                object: null,
             });
         }
     };
@@ -427,6 +434,55 @@ const ElementRow = props => {
         <button onClick={props.onRemove}>Trash</button>
     );
 
+    // Render a cell based on a primitive SchemaType, a value, and a handler
+    const renderCell = (primitiveType, value, handler) => {
+        const isStringType = _.includes(STRING_INPUT_TYPES, primitiveType._type)
+
+        const CellType = isStringType
+            ? StringCell
+            : ObjectCell;
+
+        return <CellType
+            type={primitiveType}
+            value={value}
+            onChange={handler} />
+    };
+
+    // If props.type is a primitive (i.e. type._isSchemaType is true), we just render a single td
+    // based on props.type.
+    // If props.type is an object, we render td:s for each key in the object.
+    const renderElementBody = () => {
+        // Primitive case
+        if (props.type._isSchemaType) {
+            return renderCell(
+                // Just use the type directly
+                props.type,
+
+                // Use the object directly
+                props.object || null,
+
+                // The change handler just returns the new value directly
+                props.onChange
+            );
+        }
+
+        // Object case
+        return _.map(
+            Object.keys(props.type),
+            key => {
+                const value = props.object
+                    ? props.object[key]
+                    : null;
+
+                return renderCell(
+                    props.type[key],
+                    value,
+                    getChangeHandler(key)
+                );
+            }
+        );
+    };
+
     return (
         <tr>
             <td>
@@ -438,27 +494,11 @@ const ElementRow = props => {
                 }
             </td>
 
-            {
-                _.map(
-                    Object.keys(props.type),
-                    key => {
-                        const isStringType = _.includes(STRING_INPUT_TYPES, props.type[key]._type)
-
-                        const CellType = isStringType
-                            ? StringCell
-                            : ObjectCell;
-
-                        const value = props.object
-                            ? props.object[key]
-                            : null;
-
-                        return <CellType
-                            type={props.type[key]}
-                            value={value}
-                            onChange={getChangeHandler(key)} />
-                    }
-                )
-            }
+            {/*
+              * Render the "body" of the element -- for an object, cells for each key.
+              * For a primitive, a single cell.
+              */}
+            { renderElementBody() }
 
             <td>
                 {
