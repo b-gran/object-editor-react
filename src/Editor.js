@@ -20,6 +20,9 @@ const isArraySchemaType = schemaType => {
 // Base propTypes for all editor variants
 const BASE_EDITOR_PROPTYPES = {
     // Schema for the elements in the array
+    // TODO: add "render" functions to type somehow, so that an element can provide a custom
+    // TODO: render function for any of its cells
+    // TODO: pass validation functions through schema
     type: PropTypes.Schema.isRequired,
 
     // Optional: classes to apply to the editor wrapper
@@ -209,7 +212,8 @@ class ArrayEditor extends React.Component {
 };
 
 // A table row for adding a new element to an array
-// TODO: error handling
+// TODO: error handling, validation
+// TODO: support empty values for certain types
 class AddObjectRow extends React.Component {
     static displayName = 'AddObjectRow';
 
@@ -355,6 +359,7 @@ class ObjectCell extends React.Component {
 
     // Conditionally renders the value editor (depending on whether
     // the cell is toggled open)
+    // TODO: too many conditionals here -- separate into different Cell classes
     renderEditor = () => {
         // Cell is closed -- render nothing
         if (!this.state.open) {
@@ -389,6 +394,9 @@ class ObjectCell extends React.Component {
         const arrayValue = this.props.value || [];
 
         // Cell is open -- render the value editor
+
+        // TODO: pull these update/add/remove handlers out of the render func
+        // TODO: separate Cells for arrays, since the onUpdateElement function sig is different
         return (
             <Editor
                 onClickScrim={this.close}

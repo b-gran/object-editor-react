@@ -88,8 +88,19 @@ export const maybeRequired = actuallyValidate => isRequired => something => {
 export function SchemaType (validate, type, opts = {}) {
     const func = validate;
     func.__proto__ = {
+        // TODO: explicitly check the __proto__ (or use getter!) for these props, so their names
+        // TODO: are free for use by higher level object schemas.
+        // e.g. the following breaks things
+        /*
+         * const schema = {
+         *      foo: SchemaTypes.string(),
+         *      _type: SchemaTypes.string(),
+         *      _isSchemaType: SchemaTypes.string(),
+         * };
+         */
         _isSchemaType: true,
         _type: type,
+
         ...opts
     };
 
@@ -139,7 +150,9 @@ export const SchemaTypes = {
 
             // Make the element type available
             _elementType: type,
-        })
+        }),
+
+    // todo: oneOf, shape, null
 };
 
 // Returns a message for an error caused by an invalid Schema type.
