@@ -327,7 +327,7 @@ class ObjectCell extends React.Component {
         // Whether or not to use an Array editor
         const useArrayEditor = (
             // Use an array editor if the SchemaType is one of the array variants (array or arrayOf)
-            (this.props.type.type && this.props.type.type.match(/array/) !== null) ||
+            (this.props.type._type && this.props.type._type.match(/array/) !== null) ||
 
             // Also use one if the value is an array
             Array.isArray(this.props.value)
@@ -341,8 +341,8 @@ class ObjectCell extends React.Component {
         // The type to pass to the editor -- if it's an object editor, that's just the current type.
         // If it's an array editor, we need to use the array's type.
         const editorType = useArrayEditor
-            // If we're using an array editor, use the types's own elementType or allow any
-            ? this.props.type.elementType || Schema.SchemaTypes.any
+            // If we're using an array editor, use the types's own _elementType or allow any
+            ? this.props.type._elementType || Schema.SchemaTypes.any
 
             // Otherwise use the existing type
             : this.props.type;
@@ -442,7 +442,7 @@ const ElementRow = props => {
                 _.map(
                     Object.keys(props.type),
                     key => {
-                        const isStringType = _.includes(STRING_INPUT_TYPES, props.type[key].type)
+                        const isStringType = _.includes(STRING_INPUT_TYPES, props.type[key]._type)
 
                         const CellType = isStringType
                             ? StringCell

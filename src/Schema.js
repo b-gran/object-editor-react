@@ -83,13 +83,13 @@ export const maybeRequired = actuallyValidate => isRequired => something => {
     );
 };
 
-// Create a SchemaType (really just a function with `type` and
-// `isSchemaType` properties)
+// Create a SchemaType (really just a function with `_type` and
+// `_isSchemaType` properties)
 export function SchemaType (validate, type, opts = {}) {
     const func = validate;
     func.__proto__ = {
-        isSchemaType: true,
-        type,
+        _isSchemaType: true,
+        _type: type,
         ...opts
     };
 
@@ -138,7 +138,7 @@ export const SchemaTypes = {
             ...opts,
 
             // Make the element type available
-            elementType: type,
+            _elementType: type,
         })
 };
 
@@ -157,7 +157,7 @@ export function isObject (test) {
 // its leaves.
 export function validateSchema (schema, location = '') {
     // Base case: leaf is a SchemaType
-    if (schema.isSchemaType) {
+    if (schema._isSchemaType) {
         return null;
     }
 
@@ -197,7 +197,7 @@ export function matchesSchema (schema, test) {
 function matchesSchemaInner (schema, test) {
     // Base case: SchemaType leaf
     // Just evaluate directly
-    if (schema.isSchemaType) {
+    if (schema._isSchemaType) {
         return schema(test);
     }
 
