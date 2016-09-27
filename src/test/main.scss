@@ -1,9 +1,15 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans';
+
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
 .editor.editor--outside {
   width: 1000px;
   margin: 50px auto;
   background: #EEE;
-  padding: 25px;
   position: relative;
+  padding: 0px;
   border: 1px solid black;
 }
 
@@ -14,10 +20,32 @@
   z-index: 1;
   width: 300px;
   background: #EEE;
-  padding: 25px;
+  padding: 0px;
   border: 1px solid black;
+}
+
+tr, thead {
+  padding: 0px;
+  border: 0px;
 }
 
 .object-cell {
   position: relative;
+}
+
+input {
+  height: 2em;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid #CCCCCC;
+  box-shadow: none;
+}
+
+td, th {
+  text-align: center;
+}
+
+th, thead {
+  background: #999999;
+  color: #EEEEEE;
 }
