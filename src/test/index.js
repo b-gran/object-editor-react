@@ -24,9 +24,14 @@ const schema = {
             }
         }
     },
-    test: Schema.SchemaTypes.arrayOf({
-        foo: Schema.SchemaTypes.string()
-    })(),
+
+    stringArray: Schema.SchemaTypes.arrayOf(Schema.SchemaTypes.string())(),
+
+    complexArray: Schema.SchemaTypes.arrayOf(
+        Schema.SchemaTypes.arrayOf({
+            foo: Schema.SchemaTypes.string(),
+        })()
+    )(),
 };
 
 // Sets the element at idx to updated
