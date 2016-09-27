@@ -12,6 +12,11 @@ import _ from 'lodash';
 
 const empty = () => null;
 
+// Returns true if `schemaType` is one of the array types -- "array", or "arrayOf".
+const isArraySchemaType = schemaType => {
+    return schemaType._type && schemaType._type.match(/array/) !== null;
+};
+
 // Base propTypes for all editor variants
 const BASE_EDITOR_PROPTYPES = {
     // Schema for the elements in the array
@@ -24,6 +29,84 @@ const BASE_EDITOR_PROPTYPES = {
     // A function that returns a react node to use for the icon
     icon: React.PropTypes.func,
 };
+
+// Returns the column title for the SchemaType `schemaType`.
+function columnTitle (schemaType) {
+    // Complex object schema
+    if (typeof schemaType === 'object') {
+        return 'Object';
+    }
+
+    // If it's an array type, use the elementType property.
+    if (isArraySchemaType(schemaType)) {
+        return 'Array of ' + columnTitle(schemaType._elementType || Schema.SchemaTypes.any);
+    }
+
+    // Otherwise, just use the _type field.
+    return _.capitalize(schemaType._type);
+}
+
+class BaseTable extends React.Component {
+    static displayName = 'BaseTable';
+
+    static propTypes = {
+        ...BASE_EDITOR_PROPTYPES,
+
+        // The thing to edit
+        // Can be anything for a base editor (which doesn't actually render an editor)
+        object: React.PropTypes.any,
+    };
+
+    // Render the column titles based on a primitive schema type.
+    renderPrimitiveColumns = () => {
+        return <th>{ columnTitle(this.props.type) }</th>;
+    };
+
+    // Render column titles based on a complex object-schema
+    renderObjectColumns = () => {
+        // A column for each element key
+        return Object.keys(this.props.type).map(
+            field => (
+                <th>{ field }</th>
+            )
+        );
+    };
+
+    render () {
+        const isPrimitiveSchema = !!this.props.type._isSchemaType;
+
+        return (
+            <table className={cx('editor', this.props.className)}>
+                <thead>
+                <tr>
+                    <th>
+                        {/* Blank -- just for spacing */}
+                        {/* This is the icon column */}
+                    </th>
+
+                    {
+                        isPrimitiveSchema
+                            ? this.renderPrimitiveColumns()
+                            : this.renderObjectColumns()
+                    }
+
+                    <th>
+                        {/* Blank -- just for spacing */}
+                        {/* This is the delete object column */}
+                    </th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {/* Render children in tbody */}
+                { this.props.children }
+
+                </tbody>
+            </table>
+        );
+    }
+}
 
 // A tabular editor for editing a single JSON object
 class ObjectEditor extends React.Component {
@@ -49,43 +132,16 @@ class ObjectEditor extends React.Component {
 
     render () {
         return (
-            <table className={cx('editor', 'editor--object', this.props.className)}>
-                <thead>
-                <tr>
-                    <th>
-                        {/* Blank -- just for spacing */}
-                        {/* This is the icon column */}
-                    </th>
-
-                    {
-                        // A column for each element key
-                        Object.keys(this.props.type).map(
-                            field => (
-                                <th>{ field }</th>
-                            )
-                        )
-                    }
-
-                    <th>
-                        {/* Blank -- just for spacing */}
-                        {/* This is the delete object column */}
-                    </th>
-                </tr>
-                </thead>
-
-                <tbody>
-
-                    { /* Object is just an individual object, so there's only one row */ }
-                    <ElementRow
-                        icon={this.props.icon || undefined}
-                        trash={empty /* no trash button for single objects */}
-                        type={this.props.type}
-                        object={this.props.object}
-                        onChange={this.props.onUpdateElement}
-                        onRemove={empty /* Can't remove a single object */} />
-
-                </tbody>
-            </table>
+            <BaseTable type={this.props.type} className={cx('editor--object', this.props.className)}>
+                { /* Object is just an individual object, so there's only one row */ }
+                <ElementRow
+                    icon={this.props.icon || undefined}
+                    trash={empty /* no trash button for single objects */}
+                    type={this.props.type}
+                    object={this.props.object}
+                    onChange={this.props.onUpdateElement}
+                    onRemove={empty /* Can't remove a single object */} />
+            </BaseTable>
         );
     }
 };
@@ -130,31 +186,7 @@ class ArrayEditor extends React.Component {
 
     render () {
         return (
-            <table className={cx('editor', 'editor--array', this.props.className)}>
-                <thead>
-                <tr>
-                    <th>
-                        {/* Blank -- just for spacing */}
-                        {/* This is the icon column */}
-                    </th>
-
-                    {
-                        // A column for each element key
-                        Object.keys(this.props.type).map(
-                            field => (
-                                <th>{ field }</th>
-                            )
-                        )
-                    }
-
-                    <th>
-                        {/* Blank -- just for spacing */}
-                        {/* This is the delete object column */}
-                    </th>
-                </tr>
-                </thead>
-
-                <tbody>
+            <BaseTable type={this.props.type} className={cx('editor--array', this.props.className)}>
 
                 {
                     _.map(
@@ -164,16 +196,14 @@ class ArrayEditor extends React.Component {
                             type={this.props.type}
                             object={el}
                             onChange={updated => this.props.onUpdateElement(updated, idx)}
-                            onRemove={() => this.props.onRemoveElement(el, idx)} />
+                            onRemove={() => this.props.onRemoveElement(el, idx)}/>
                     )
                 }
 
                 <AddObjectRow
                     type={this.props.type}
-                    onAddElement={this.props.onAddElement} />
-
-                </tbody>
-            </table>
+                    onAddElement={this.props.onAddElement}/>
+            </BaseTable>
         );
     }
 };
@@ -366,7 +396,27 @@ class ObjectCell extends React.Component {
                 className='editor--inside'
                 type={editorType}
                 object={this.props.value}
-                onUpdateElement={this.props.onChange}
+                onUpdateElement={
+                    /* This function needs to handle array and object property updates */
+                    (el, updatedIndex) => {
+                        // Array update
+                        if (typeof updatedIndex !== 'undefined') {
+                            return this.props.onChange(
+                                update(
+                                    arrayValue,
+                                    {
+                                        [updatedIndex]: {
+                                            $set: el,
+                                        }
+                                    }
+                                )
+                            );
+                        }
+
+                        // "set" object property update
+                        return this.props.onChange(el);
+                    }
+                }
                 onRemoveElement={
                     // Tell the consumer an element was removed
                     (el, droppedIndex) => this.props.onChange(
