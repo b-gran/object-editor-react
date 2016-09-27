@@ -13,7 +13,9 @@ const empty = () => null;
 // A deeply nested test schema
 const schema = {
     foo: Schema.SchemaTypes.string({ required: true }),
+
     bar: Schema.SchemaTypes.number(),
+
     baz: {
         biz: Schema.SchemaTypes.number(),
         boz: Schema.SchemaTypes.number(),
