@@ -18,6 +18,10 @@ import watchify from 'watchify';
 import babelify from 'babelify';
 import envify from 'envify';
 
+/* Rollup */
+const rollup = require('rollup');
+import rollupBabel from 'rollup-plugin-babel';
+
 import del from 'del';
 import size from 'gulp-size';
 import gutil from 'gulp-util';
@@ -77,8 +81,17 @@ const config = {
     },
 
     // The main dev bundle
-    bundle: {
+    devBundle: {
         file: './src/test/index.js', name: 'bundle'
+    },
+
+    // npm config stuff
+    npm: {
+        // Path to the npm entry file in src directory
+        sourceEntry: './src/index.js',
+
+        // Bundle output path, with the file name npm expects
+        bundlePath: path.join('dist', pjson.main),
     },
 
     // Modules to pack into external bundle for use by client bundle
@@ -335,20 +348,20 @@ gulp.task('deps', done => {
 });
 
 gulp.task('client', (done) => {
-    let bundler = getBundler(config.bundle.file, true);
+    let bundler = getBundler(config.devBundle.file, true);
 
-    bundle(bundler, config.bundle.name, done);
+    bundle(bundler, config.devBundle.name, done);
 
     bundler.on('update', () => {
         gutil.log(
-            `Rebundling ${chalk.green(config.bundle.file)}
-            (${chalk.blue(config.bundle.name)} bundle)...`
+            `Rebundling ${chalk.green(config.devBundle.file)}
+            (${chalk.blue(config.devBundle.name)} bundle)...`
         );
 
         return bundle(
             bundler,
-            config.bundle.name,
-            () => gutil.log(`Finished bundling ${chalk.blue(config.bundle.name)}`)
+            config.devBundle.name,
+            () => gutil.log(`Finished bundling ${chalk.blue(config.devBundle.name)}`)
         );
     });
 
@@ -385,6 +398,45 @@ gulp.task('watch', () => {
     const watchStyles = watch({ src: config.styles }, 'styles');
 });
 
+// Bundle the application for distribution to npm
+gulp.task('bundle:npm', done => {
+    rollup.rollup({
+        entry: config.npm.sourceEntry,
+
+        // Don't combine npm deps
+        external: [
+            'react',
+            'react-dom',
+            'lodash',
+            'react-addons-update',
+            'classnames',
+        ],
+
+        // Use babel, ignore the babelrc
+        plugins: [
+            rollupBabel({
+                babelrc: false,
+                presets: [
+                    'es2015-rollup',
+                    'stage-0',
+                    'react'
+                ]
+            }),
+        ],
+    }).then(bundle => {
+        // bundle with CommonJS es5 output
+        // write to dist
+        return bundle.write({
+            format: 'cjs',
+            dest: config.npm.bundlePath,
+        });
+    }).then(() => {
+        return done();
+    }).catch(err => {
+        return done(err);
+    })
+});
+
 // Prepare the already-built dist directory for publishing to npm.
 gulp.task('pack', done => {
     // Remove dev stuff from package.json
@@ -409,7 +461,7 @@ gulp.task('dev', (done) => {
 gulp.task('production', done => {
     runSequence(
         'clean',
-        [ 'copies:production', 'babel:production' ],
+        [ 'copies:production', 'bundle:npm' ],
         'pack',
         done
     );
