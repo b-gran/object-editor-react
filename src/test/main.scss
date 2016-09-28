@@ -29,9 +29,11 @@ tr, thead {
   border: 0px;
 }
 
-.object-cell {
+.cell--object {
   position: relative;
 }
+
+.cell--value {}
 
 input {
   height: 2em;

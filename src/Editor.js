@@ -49,6 +49,28 @@ function columnTitle (schemaType) {
     return _.capitalize(schemaType._type);
 }
 
+// A <th /> Element with a the class ".editor__column-title"
+const ColumnTitle = props => {
+    const classes = cx(
+        'column-title',
+        props.className
+    );
+
+    return (
+        <th className={classes}>
+            { props.children }
+        </th>
+    );
+};
+ColumnTitle.displayName = 'ColumnTitle';
+ColumnTitle.propTypes = {
+    // Optional extra classes for the <th />
+    className: React.PropTypes.string,
+
+    // Children of the <th />
+    children: React.PropTypes.node,
+};
+
 class BaseTable extends React.Component {
     static displayName = 'BaseTable';
 
@@ -62,7 +84,7 @@ class BaseTable extends React.Component {
 
     // Render the column titles based on a primitive schema type.
     renderPrimitiveColumns = () => {
-        return <th>{ columnTitle(this.props.type) }</th>;
+        return <ColumnTitle>{ columnTitle(this.props.type) }</ColumnTitle>;
     };
 
     // Render column titles based on a complex object-schema
@@ -70,7 +92,7 @@ class BaseTable extends React.Component {
         // A column for each element key
         return Object.keys(this.props.type).map(
             field => (
-                <th>{ field }</th>
+                <ColumnTitle>{ field }</ColumnTitle>
             )
         );
     };
@@ -81,7 +103,7 @@ class BaseTable extends React.Component {
         return (
             <table className={cx('editor', this.props.className)}>
                 <thead>
-                <tr>
+                <tr className="editor__column-titles">
                     <th>
                         {/* Blank -- just for spacing */}
                         {/* This is the icon column */}
@@ -138,6 +160,7 @@ class ObjectEditor extends React.Component {
             <BaseTable type={this.props.type} className={cx('editor--object', this.props.className)}>
                 { /* Object is just an individual object, so there's only one row */ }
                 <ElementRow
+                    className="row--object"
                     icon={this.props.icon || undefined}
                     trash={empty /* no trash button for single objects */}
                     type={this.props.type}
@@ -195,6 +218,7 @@ class ArrayEditor extends React.Component {
                     _.map(
                         this.props.object,
                         (el, idx) => <ElementRow
+                            className="row--array"
                             icon={this.props.icon || undefined}
                             type={this.props.type}
                             object={el}
@@ -311,9 +335,9 @@ class StringCell extends React.Component {
 
     render () {
         return (
-            <td>
+            <td className="cell--value">
                 <input
-                    className='form-control'
+                    className='form-control input--value'
                     type='text'
                     value={this.props.value || ''}
                     required={this.props.type.required}
@@ -451,7 +475,7 @@ class ObjectCell extends React.Component {
 
     render () {
         return (
-            <td className='object-cell'>
+            <td className='cell--object'>
                 <button onClick={this.clickEdit}>Edit</button>
 
                 { this.renderEditor() }
@@ -541,8 +565,13 @@ const ElementRow = props => {
         );
     };
 
+    const rowClasses = cx(
+        'row',
+        props.className || ''
+    );
+
     return (
-        <tr>
+        <tr className={rowClasses}>
             <td>
                 {
                     // Icon for the element
@@ -593,6 +622,9 @@ ElementRow.propTypes = {
     //
     // function onRemove () -> void
     onRemove: React.PropTypes.func.isRequired,
+
+    // Optional extra classes to add to the <tr />
+    className: React.PropTypes.string,
 };
 
 export { ObjectEditor, ArrayEditor };
