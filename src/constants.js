@@ -4,7 +4,7 @@ import { invalidSchemaMessage, validateSchema } from './Schema';
 // if it's undefined.
 // That validator returned by this function will have a `isRequired`
 // field that is a function that runs the original validator.
-function withIsRequired (validator) {
+function addIsRequiredProperty (validator) {
     const func = function (props, propName) {
         if (typeof props[propName] === 'undefined') {
             return null;
@@ -37,7 +37,7 @@ function validateSchemaProp (props, propName, componentName) {
 
 export const PropTypes = {
     // Requires the prop to be a valid SchemaType
-    SchemaType: withIsRequired(validateSchemaTypeProp),
+    SchemaType: addIsRequiredProperty(validateSchemaTypeProp),
 
-    Schema: withIsRequired(validateSchemaProp)
+    Schema: addIsRequiredProperty(validateSchemaProp)
 };
