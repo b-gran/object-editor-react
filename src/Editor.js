@@ -337,7 +337,7 @@ class StringCell extends React.Component {
         return (
             <td className="cell--value">
                 <input
-                    className='form-control input--value'
+                    className='form-control editor__input--value'
                     type='text'
                     value={this.props.value || ''}
                     required={this.props.type.required}
