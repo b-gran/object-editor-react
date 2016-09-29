@@ -282,17 +282,17 @@ td.cell--value
 
 An element in an `ArrayEditor`
 ```
-tr.row.row--array
+tr.editor__row.editor__row--array
 ```
 
 An element in an `ObjectEditor`
 ```
-tr.row.row--object
+tr.editor__row.editor__row--object
 ```
 
 The Add Object Row in an ArrayEditor
 ```
-tr.row.editor__add-object
+tr.editor__row.editor__add-object
 ```
 
 An input that allows editing a property value directly

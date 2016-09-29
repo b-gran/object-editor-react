@@ -160,7 +160,7 @@ class ObjectEditor extends React.Component {
             <BaseTable type={this.props.type} className={cx('editor--object', this.props.className)}>
                 { /* Object is just an individual object, so there's only one row */ }
                 <ElementRow
-                    className="row--object"
+                    className="editor__row--object"
                     icon={this.props.icon || undefined}
                     trash={empty /* no trash button for single objects */}
                     type={this.props.type}
@@ -218,7 +218,7 @@ class ArrayEditor extends React.Component {
                     _.map(
                         this.props.object,
                         (el, idx) => <ElementRow
-                            className="row--array"
+                            className="editor__row--array"
                             icon={this.props.icon || undefined}
                             type={this.props.type}
                             object={el}
@@ -566,7 +566,7 @@ const ElementRow = props => {
     };
 
     const rowClasses = cx(
-        'row',
+        'editor__row',
         props.className || ''
     );
 
