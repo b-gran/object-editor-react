@@ -54,6 +54,6 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash": "^4.16.1",
-    "react-addons-update": "^14.0.0"
+    "react-addons-update": ">=14.0.0"
   }
 }
