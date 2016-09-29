@@ -297,7 +297,7 @@ tr.editor__row.editor__add-object
 
 An input that allows editing a property value directly
 ```
-input.input--value
+input.editor__input--value
 ```
 
 Column titles at the top of an editor

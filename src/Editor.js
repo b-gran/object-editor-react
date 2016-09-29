@@ -2,7 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import update from 'react-addons-update';
 
-import { PropTypes } from './constants';
+import { PropTypes, BaseClassnames } from './constants';
 
 import Scrim from './Scrim';
 
@@ -52,7 +52,7 @@ function columnTitle (schemaType) {
 // A <th /> Element with a the class ".editor__column-title"
 const ColumnTitle = props => {
     const classes = cx(
-        'column-title',
+        BaseClassnames.ColumnTitle(),
         props.className
     );
 
@@ -101,9 +101,9 @@ class BaseTable extends React.Component {
         const isPrimitiveSchema = !!this.props.type._isSchemaType;
 
         return (
-            <table className={cx('editor', this.props.className)}>
+            <table className={cx(BaseClassnames.Editor(), this.props.className)}>
                 <thead>
-                <tr className="editor__column-titles">
+                <tr className={BaseClassnames.ColumnTitles()}>
                     <th>
                         {/* Blank -- just for spacing */}
                         {/* This is the icon column */}
@@ -157,10 +157,10 @@ class ObjectEditor extends React.Component {
 
     render () {
         return (
-            <BaseTable type={this.props.type} className={cx('editor--object', this.props.className)}>
+            <BaseTable type={this.props.type} className={cx(BaseClassnames.Editor('--object'), this.props.className)}>
                 { /* Object is just an individual object, so there's only one row */ }
                 <ElementRow
-                    className="editor__row--object"
+                    className={BaseClassnames.ElementRow('--object')}
                     icon={this.props.icon || undefined}
                     trash={empty /* no trash button for single objects */}
                     type={this.props.type}
@@ -212,13 +212,13 @@ class ArrayEditor extends React.Component {
 
     render () {
         return (
-            <BaseTable type={this.props.type} className={cx('editor--array', this.props.className)}>
+            <BaseTable type={this.props.type} className={cx(BaseClassnames.Editor('--array'), this.props.className)}>
 
                 {
                     _.map(
                         this.props.object,
                         (el, idx) => <ElementRow
-                            className="editor__row--array"
+                            className={BaseClassnames.ElementRow('--array')}
                             icon={this.props.icon || undefined}
                             type={this.props.type}
                             object={el}
@@ -295,7 +295,7 @@ class AddObjectRow extends React.Component {
     };
 
     render () {
-        const rowClasses = cx('editor__add-object');
+        const rowClasses = cx(BaseClassnames.AddObjectRow());
         return (
             <ElementRow
                 className={rowClasses}
@@ -334,10 +334,16 @@ class StringCell extends React.Component {
     };
 
     render () {
+        const inputClasses = cx(
+            'form-control',
+            BaseClassnames.EditorInput(),
+            BaseClassnames.EditorInput('--value')
+        );
+
         return (
-            <td className="cell--value">
+            <td className={BaseClassnames.Cell('--value')}>
                 <input
-                    className='form-control editor__input--value'
+                    className={inputClasses}
                     type='text'
                     value={this.props.value || ''}
                     required={this.props.type.required}
@@ -425,7 +431,7 @@ class ObjectCell extends React.Component {
             <Editor
                 onClickScrim={this.close}
 
-                className='editor--inside'
+                className={BaseClassnames.Editor('--inside')}
                 type={editorType}
                 object={this.props.value}
                 onUpdateElement={
@@ -475,7 +481,7 @@ class ObjectCell extends React.Component {
 
     render () {
         return (
-            <td className='cell--object'>
+            <td className={BaseClassnames.Cell('--object')}>
                 <button onClick={this.clickEdit}>Edit</button>
 
                 { this.renderEditor() }
@@ -566,7 +572,7 @@ const ElementRow = props => {
     };
 
     const rowClasses = cx(
-        'editor__row',
+        BaseClassnames.ElementRow(),
         props.className || ''
     );
 
