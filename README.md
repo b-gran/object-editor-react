@@ -1,5 +1,7 @@
 # `object-editor-react`
 
+[![Build Status](https://travis-ci.org/b-gran/object-editor-react.svg?branch=master)](https://travis-ci.org/b-gran/object-editor-react) [![npm version](https://badge.fury.io/js/object-editor-react.svg)](https://badge.fury.io/js/object-editor-react)
+
 `object-editor-react` is a table-based `JSON` object editor build using `React.js`.
 
 Its purpose is to enable drop-in editing of deeply nested JSON objects with minimal configuration.
