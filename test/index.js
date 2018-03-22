@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import * as Schema from '../Schema';
-import { ObjectEditor, ArrayEditor } from '../Editor';
-import { PropTypes } from '../constants';
+import * as Schema from '../src/Schema';
+import { ObjectEditor, ArrayEditor } from '../src/Editor';
+import { PropTypes } from '../src/constants';
 
 import update from 'react-addons-update';
 import _ from 'lodash';

@@ -2,7 +2,7 @@
  * Test Schemas and SchemaTypes.
  */
 
-import * as Schema from '../../Schema';
+import * as Schema from '../../src/Schema';
 import { expect } from 'chai';
 import _ from 'lodash';
 
