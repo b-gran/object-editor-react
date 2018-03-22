@@ -4,7 +4,7 @@
   "description": "A React-based JSON object editor",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/mocha --compilers js:babel-core/register"
+    "test": "mocha test --compilers js:babel-core/register"
   },
   "repository": {
     "type": "git",
