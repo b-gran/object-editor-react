@@ -2,6 +2,8 @@
  * Adapted from pivotal-ui's scrim mixin
  *      See https://github.com/pivotal-cf/pivotal-ui/blob/development/library/src/pivotal-ui-react/mixins/mixins/scrim_mixin.js
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 
@@ -35,7 +37,7 @@ export default function (Component) {
 
         static propTypes = {
             // Handler called when the scrim is clicked
-            onClickScrim: React.PropTypes.func.isRequired,
+            onClickScrim: PropTypes.func.isRequired,
         };
 
         constructor (props) {
@@ -72,5 +74,5 @@ export default function (Component) {
         render () {
             return <Component { ...this.props } />;
         }
-    }
+    };
 }

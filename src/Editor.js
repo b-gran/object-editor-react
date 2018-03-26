@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
 import update from 'react-addons-update';
 
-import { PropTypes, BaseClassnames } from './constants';
+import { BaseClassnames, PropTypes as Props } from './constants';
 
 import Scrim from './Scrim';
 
@@ -23,14 +24,14 @@ const BASE_EDITOR_PROPTYPES = {
     // TODO: add "render" functions to type somehow, so that an element can provide a custom
     // TODO: render function for any of its cells
     // TODO: pass validation functions through schema
-    type: PropTypes.Schema.isRequired,
+    type: Props.Schema.isRequired,
 
     // Optional: classes to apply to the editor wrapper
-    className: React.PropTypes.string,
+    className: PropTypes.string,
 
     // Optional.
     // A function that returns a react node to use for the icon
-    icon: React.PropTypes.func,
+    icon: PropTypes.func,
 };
 
 // Returns the column title for the SchemaType `schemaType`.
@@ -65,10 +66,10 @@ const ColumnTitle = props => {
 ColumnTitle.displayName = 'ColumnTitle';
 ColumnTitle.propTypes = {
     // Optional extra classes for the <th />
-    className: React.PropTypes.string,
+    className: PropTypes.string,
 
     // Children of the <th />
-    children: React.PropTypes.node,
+    children: PropTypes.node,
 };
 
 class BaseTable extends React.Component {
@@ -79,7 +80,7 @@ class BaseTable extends React.Component {
 
         // The thing to edit
         // Can be anything for a base editor (which doesn't actually render an editor)
-        object: React.PropTypes.any,
+        object: PropTypes.any,
     };
 
     // Render the column titles based on a primitive schema type.
@@ -143,12 +144,12 @@ class ObjectEditor extends React.Component {
         // The thing to edit. Can be either
         // * an object with shape specified in type
         // * undefined
-        object: React.PropTypes.object,
+        object: PropTypes.object,
 
         // Handler called when the object is updated
         // function onUpdateElement (updatedObject) -> void
         // updatedObject is the current object with updates applied
-        onUpdateElement: React.PropTypes.func.isRequired,
+        onUpdateElement: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -170,7 +171,7 @@ class ObjectEditor extends React.Component {
             </BaseTable>
         );
     }
-};
+}
 
 const ScrimObjectEditor = Scrim(ObjectEditor);
 
@@ -184,26 +185,26 @@ class ArrayEditor extends React.Component {
         // The thing to edit. Must be either
         // * an array of the objects with shape specified in type
         // * undefined
-        object: React.PropTypes.array,
+        object: PropTypes.array,
 
         // Handler called when one of the elements in object is modified
         //
         // function onUpdateElement (updatedElement: Object, index: Number) -> void
         // where updatedElement is the element that has been updated, and
         // index is the index of updatedElement in the the object prop
-        onUpdateElement: React.PropTypes.func.isRequired,
+        onUpdateElement: PropTypes.func.isRequired,
 
         // Handler called when one of the elements is removed
         //
         // function onUpdateElement (removedElement: Object, index: Number) -> void
         // where removedElement is the element that has been removed, and
         // index is the index of removedElement in the the object prop
-        onRemoveElement: React.PropTypes.func.isRequired,
+        onRemoveElement: PropTypes.func.isRequired,
 
         // Handler called when a new element is added
         // function onAddElement (newElement: Object) -> void
         // where newElement is the element to add
-        onAddElement: React.PropTypes.func.isRequired,
+        onAddElement: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -233,7 +234,7 @@ class ArrayEditor extends React.Component {
             </BaseTable>
         );
     }
-};
+}
 
 // A table row for adding a new element to an array
 // TODO: error handling, validation
@@ -243,14 +244,14 @@ class AddObjectRow extends React.Component {
 
     static propTypes = {
         // The schema to to use for creating new element
-        type: PropTypes.Schema.isRequired,
+        type: Props.Schema.isRequired,
 
         // Handler called when a new element is added
         // If this function returns anything truthy, the object row is cleared (so a new object can be added).
         // If this function returns anything falsey, the object row will not be cleared.
         //
         // function onAddElement (newElement: Object) -> boolean
-        onAddElement: React.PropTypes.func.isRequired,
+        onAddElement: PropTypes.func.isRequired,
     };
 
     constructor (props) {
@@ -324,13 +325,13 @@ class StringCell extends React.Component {
 
     static propTypes = {
         // The type of this cell
-        type: PropTypes.Schema.isRequired,
+        type: Props.Schema.isRequired,
 
         // Current value of this cell
-        value: React.PropTypes.any,
+        value: PropTypes.any,
 
         // Handler called when the value is modified
-        onChange: React.PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired,
     };
 
     render () {
@@ -360,13 +361,13 @@ class ObjectCell extends React.Component {
 
     static propTypes = {
         // The type of this cell
-        type: PropTypes.Schema.isRequired,
+        type: Props.Schema.isRequired,
 
         // Current value of this cell
-        value: React.PropTypes.any,
+        value: PropTypes.any,
 
         // Handler called when the value is modified
-        onChange: React.PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired,
     };
 
     state = {
@@ -607,30 +608,30 @@ ElementRow.displayName = 'ElementRow';
 ElementRow.propTypes = {
     // The type of this field -- a SchemaType
     // type: PropTypes.SchemaType.isRequired,
-    type: PropTypes.Schema.isRequired,
+    type: Props.Schema.isRequired,
 
     // Icon to use for the field
-    icon: React.PropTypes.func,
+    icon: PropTypes.func,
 
     // Content for the trash button cell
-    trash: React.PropTypes.func,
+    trash: PropTypes.func,
 
     // The element itself (should have the type `type`)
-    object: React.PropTypes.any,
+    object: PropTypes.any,
 
     // Handler called when the element is updated
     //
     // function onChange (updatedElement: Object) -> void
-    onChange: React.PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
 
     // Handler called when the user clicks the remove button
     // Called with no arguments
     //
     // function onRemove () -> void
-    onRemove: React.PropTypes.func.isRequired,
+    onRemove: PropTypes.func.isRequired,
 
     // Optional extra classes to add to the <tr />
-    className: React.PropTypes.string,
+    className: PropTypes.string,
 };
 
 export { ObjectEditor, ArrayEditor };

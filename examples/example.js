@@ -1,14 +1,19 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { render } from 'react-dom';
 
 import * as Schema from '../src/Schema';
 import { ObjectEditor, ArrayEditor } from '../src/Editor';
-import { PropTypes } from '../src/constants';
+import { PropTypes as Props } from '../src/constants'
 
 import update from 'react-addons-update';
 import _ from 'lodash';
 
+import './main.css'
+
 const empty = () => null;
+
+const APP_ROOT = document.getElementById('root')
 
 // A deeply nested test schema
 const schema = {
@@ -48,21 +53,21 @@ function updateArray (updated, idx) {
             }
         )
     })
-};
+}
 
 // A test wrapper around Editor that keeps track of state
 class Wrapper extends React.Component {
     static displayName = 'Wrapper';
 
     static propTypes = {
-        // Initial object to edit
-        initialObject: React.PropTypes.any.isRequired,
+      // Initial object to edit
+      initialObject: PropTypes.any.isRequired,
 
-        // Schema to use
-        type: PropTypes.Schema.isRequired,
+      // Schema to use
+      type: Props.Schema.isRequired,
 
-        // [optional] handler to use when the object is updated
-        onUpdate: React.PropTypes.func,
+      // [optional] handler to use when the object is updated
+      onUpdate: PropTypes.func,
     };
 
     constructor (props) {
@@ -82,13 +87,13 @@ class Wrapper extends React.Component {
 
     // Handler called when a new object is added.
     // Just adds the object to the end of the array.
-    add = newObject => {
+    add (newObject) {
         this.setState({ object: [ ...this.state.object, newObject ]});
         return true;
     };
 
     // Handler called when an element is removed.
-    remove = (removedObject, removedIndex) => {
+    remove (removedObject, removedIndex) {
         this.setState({
             object: _.reject(
                 this.state.object,
@@ -149,7 +154,7 @@ const b = <Wrapper
 
 render(
     b,
-    document.getElementById('app')
+    APP_ROOT.appendChild(document.createElement('div'))
 );
 
 const c = <Wrapper
@@ -171,5 +176,5 @@ const c = <Wrapper
 
 render(
     c,
-    document.getElementById('app2')
+    APP_ROOT.appendChild(document.createElement('div'))
 );
