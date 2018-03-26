@@ -4,3 +4,6 @@ dist/
 
 # IDE
 .idea/
+
+# npm
+npm-debug.log
