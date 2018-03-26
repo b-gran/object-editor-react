@@ -6,7 +6,8 @@
   "scripts": {
     "build": "neutrino build",
     "start": "neutrino start",
-    "test": "neutrino test"
+    "test": "neutrino test",
+    "test:watch": "neutrino test --watch"
   },
   "repository": {
     "type": "git",
