@@ -4,9 +4,9 @@
   "description": "A React-based JSON object editor",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test --compilers js:babel-core/register",
     "build": "neutrino build",
-    "start": "neutrino start"
+    "start": "neutrino start",
+    "test": "neutrino test"
   },
   "repository": {
     "type": "git",

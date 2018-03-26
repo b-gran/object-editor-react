@@ -19,5 +19,7 @@ module.exports = {
         title: 'neutrino_react'
       },
     }],
+
+    '@neutrinojs/jest',
   ]
 };

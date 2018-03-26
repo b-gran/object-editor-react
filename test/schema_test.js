@@ -3,23 +3,22 @@
  */
 
 import * as Schema from '../src/Schema';
-import { expect } from 'chai';
 import _ from 'lodash';
 
 describe('support functions', () => {
     describe('isValidDate()', () => {
         it('should return true for a valid date', done => {
-            expect(Schema.isValidDate(new Date())).to.be.true;
+            expect(Schema.isValidDate(new Date())).toBeTruthy()
             done();
         });
 
         it('should return false an invalid date', done => {
-            expect(Schema.isValidDate(new Date('bad date right here'))).to.be.false;
+            expect(Schema.isValidDate(new Date('bad date right here'))).toBeFalsy()
             done();
         });
 
         it('should return false a non-date', done => {
-            expect(Schema.isValidDate('not a date at all')).to.be.false;
+            expect(Schema.isValidDate('not a date at all')).toBeFalsy()
             done();
         });
     });
@@ -41,7 +40,7 @@ describe('support functions', () => {
             // Make sure each one validates correctly
             testBasicPrimitives.forEach(
                 test => {
-                    expect(Schema.typeValidator(typeof test)(test)).to.be.true;
+                    expect(Schema.typeValidator(typeof test)(test)).toBeTruthy()
                 }
             );
 
@@ -52,13 +51,13 @@ describe('support functions', () => {
     describe('isSomething()', () => {
         it('should return true for some things', done => {
             testBasicPrimitives.forEach(
-                test => expect(Schema.isSomething(test)).to.be.true
+                test => expect(Schema.isSomething(test)).toBeTruthy()
             );
             done();
         });
 
         it('should return false for undefined', done => {
-            expect(Schema.isSomething(undefined)).to.be.false;
+            expect(Schema.isSomething(undefined)).toBeFalsy()
             done();
         });
     });
@@ -75,7 +74,7 @@ describe('support functions', () => {
             ];
 
             values.forEach(
-                test => expect(Schema.isArray(test) === Array.isArray(test)).to.be.true
+                test => expect(Schema.isArray(test) === Array.isArray(test)).toBeTruthy()
             );
 
             done();
@@ -84,8 +83,8 @@ describe('support functions', () => {
 
     describe('isObject()', () => {
         it('should return true for a vanilla object', done => {
-            expect(Schema.isObject({})).to.be.true;
-            expect(Schema.isObject(new Object())).to.be.true;
+            expect(Schema.isObject({})).toBeTruthy();
+            expect(Schema.isObject(new Object())).toBeTruthy();
             done();
         });
 
@@ -99,7 +98,7 @@ describe('support functions', () => {
                 null,
             ];
 
-            expect(_.every(nonObjects, _.negate(Schema.isObject))).to.be.true;
+            expect(_.every(nonObjects, _.negate(Schema.isObject))).toBeTruthy();
 
             done();
         })
@@ -107,14 +106,14 @@ describe('support functions', () => {
 
     describe('every()', () => {
         it('should return true for basic cases', done => {
-            expect(Schema.every([true, true, true, true, 1], Boolean)).to.be.true;
-            expect(Schema.every([1, 2, 3, 4, 5], num => num < 6)).to.be.true;
+            expect(Schema.every([true, true, true, true, 1], Boolean)).toBeTruthy();
+            expect(Schema.every([1, 2, 3, 4, 5], num => num < 6)).toBeTruthy();
             done();
         });
 
         it('should return false for basic cases ', done => {
-            expect(Schema.every([true, true, true, true, 0], Boolean)).to.be.false;
-            expect(Schema.every([1, 2, 3, 4, 5, 6], num => num < 6)).to.be.false;
+            expect(Schema.every([true, true, true, true, 0], Boolean)).toBeFalsy();
+            expect(Schema.every([1, 2, 3, 4, 5, 6], num => num < 6)).toBeFalsy();
             done();
         });
 
@@ -124,10 +123,10 @@ describe('support functions', () => {
                 array,
                 (current, index, entireArray) => {
                     // Make sure current and index are accurate
-                    expect(array[index] === current).to.be.true;
+                    expect(array[index] === current).toBeTruthy();
 
                     // Make sure entireArray is being passed
-                    expect(array === entireArray).to.be.true;
+                    expect(array === entireArray).toBeTruthy();
                 }
             );
 
@@ -135,7 +134,7 @@ describe('support functions', () => {
         });
 
         it('should throw if a non-array is passed', done => {
-            expect(() => Schema.every(null, null)).to.throw(Error, /Expected "array"/);
+            expect(() => Schema.every(null, null)).toThrowError(/Expected "array"/);
             done();
         });
     });
@@ -145,18 +144,18 @@ describe('support functions', () => {
 
         it('should only validate extant values of the correct type', done => {
             const validateString = maybeValidateString(true);
-            expect(validateString('foo')).to.be.true;
-            expect(validateString(10)).to.be.false;
-            expect(validateString(undefined)).to.be.false;
+            expect(validateString('foo')).toBeTruthy();
+            expect(validateString(10)).toBeFalsy();
+            expect(validateString(undefined)).toBeFalsy();
 
             done();
         });
 
         it('should validate values of the correct type, or undefined', done => {
             const validateStringOrNothing = maybeValidateString(false);
-            expect(validateStringOrNothing('foo')).to.be.true;
-            expect(validateStringOrNothing(10)).to.be.false;
-            expect(validateStringOrNothing(undefined)).to.be.true;
+            expect(validateStringOrNothing('foo')).toBeTruthy();
+            expect(validateStringOrNothing(10)).toBeFalsy();
+            expect(validateStringOrNothing(undefined)).toBeTruthy();
 
             done();
         });
@@ -185,7 +184,7 @@ describe('support functions', () => {
 
             valid.forEach(
                 schema => {
-                    expect(Schema.validateSchema(schema)).to.be.null;
+                    expect(Schema.validateSchema(schema)).toBeNull()
                 }
             );
 
@@ -219,7 +218,7 @@ describe('support functions', () => {
 
             invalid.forEach(
                 schema => {
-                    expect(() => Schema.validateSchema(schema)).to.throw(Error)
+                    expect(() => Schema.validateSchema(schema)).toThrow()
                 }
             );
 
@@ -266,7 +265,7 @@ describe('support functions', () => {
 
             tests.forEach(
                 test => {
-                    expect(Schema.matchesSchema(schema, test)).to.be.true;
+                    expect(Schema.matchesSchema(schema, test)).toBeTruthy();
                 }
             );
 
@@ -302,7 +301,7 @@ describe('support functions', () => {
 
             tests.forEach(
                 test => {
-                    expect(Schema.matchesSchema(schema, test)).to.be.false;
+                    expect(Schema.matchesSchema(schema, test)).toBeFalsy();
                 }
             );
 
@@ -310,7 +309,7 @@ describe('support functions', () => {
         });
     });
 
-    describe('isArrayOfType()', done => {
+    describe('isArrayOfType()', () => {
         const schema = {
             foo: Schema.SchemaTypes.string({ required: true }),
             bar: Schema.SchemaTypes.number(),
@@ -347,7 +346,7 @@ describe('support functions', () => {
                 }
             ];
 
-            expect(Schema.isArrayOfType(schema)(tests)).to.be.true;
+            expect(Schema.isArrayOfType(schema)(tests)).toBeTruthy();
 
             done();
         });
@@ -396,13 +395,13 @@ describe('support functions', () => {
                 undefined,
             ];
 
-            expect(Schema.isArrayOfType(schema)(tests)).to.be.false;
+            expect(Schema.isArrayOfType(schema)(tests)).toBeFalsy();
 
             done();
         });
 
         it('should return false if a non-array is passed', done => {
-            expect(Schema.isArrayOfType(schema)(0)).to.be.false;
+            expect(Schema.isArrayOfType(schema)(0)).toBeFalsy();
             done();
         });
     });
