@@ -1,6 +1,7 @@
 # Generated files
 node_modules/
 dist/
+build/
 
 # IDE
 .idea/
