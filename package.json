@@ -32,7 +32,11 @@
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.0.0",
     "rollup": "^0.57.1",
-    "rollup-plugin-babel": "^3.0.3"
+    "rollup-plugin-babel": "^3.0.3",
+    "@neutrinojs/clean": "latest",
+    "@neutrinojs/minify": "latest",
+    "webpack": "latest",
+    "webpack-node-externals": "latest"
   },
   "dependencies": {
     "classnames": "^2.2.5",
