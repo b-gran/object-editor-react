@@ -115,9 +115,9 @@ class Wrapper extends React.Component {
                 className='editor--outside'
                 object={this.state.object}
                 type={this.props.type}
-                onUpdateElement={this.change}
-                onAddElement={this.add}
-                onRemoveElement={this.remove} />
+                onUpdateElement={this.change.bind(this)}
+                onAddElement={this.add.bind(this)}
+                onRemoveElement={this.remove.bind(this)} />
 
             <p>
                 { JSON.stringify(this.state.object, null, '\t')}
