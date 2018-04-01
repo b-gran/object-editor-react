@@ -103,9 +103,11 @@ class ObjectEditor extends React.Component {
     ...BASE_EDITOR_PROPTYPES,
 
     // The thing to edit. Can be either
-    // * an object with shape specified in type
+    // * an object, string, or number with shape specified in type
     // * undefined
-    object: PropTypes.object,
+    object: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.number, PropTypes.string, PropTypes.bool,
+    ]),
 
     // Handler called when the object is updated
     // function onUpdateElement (updatedObject) -> void

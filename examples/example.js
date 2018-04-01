@@ -185,3 +185,25 @@ render(
     c,
     APP_ROOT.appendChild(document.createElement('div'))
 );
+
+const d = <Wrapper
+  initialObject={7}
+  type={Schema.SchemaTypes.number()}
+  onUpdate={function (updated) { this.setState({ object: updated }) }}
+/>;
+
+render(
+  d,
+  APP_ROOT.appendChild(document.createElement('div'))
+);
+
+const e = <Wrapper
+  initialObject={false}
+  type={Schema.SchemaTypes.boolean()}
+  onUpdate={function (updated) { this.setState({ object: updated }) }}
+/>;
+
+render(
+  e,
+  APP_ROOT.appendChild(document.createElement('div'))
+);
