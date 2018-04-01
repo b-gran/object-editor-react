@@ -10,6 +10,7 @@ import update from 'react-addons-update';
 import _ from 'lodash';
 
 import './main.css'
+import SchemaView from '../src/SchemaView'
 
 const APP_ROOT = document.getElementById('root')
 
@@ -205,3 +206,8 @@ render(
   e,
   APP_ROOT.appendChild(document.createElement('div'))
 );
+
+render(
+  <SchemaView schema={schema} />,
+  APP_ROOT.appendChild(document.createElement('div'))
+)
