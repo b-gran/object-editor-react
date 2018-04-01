@@ -38,7 +38,7 @@
     "react-hot-loader": "^4.0.0",
     "rollup": "^0.57.1",
     "rollup-plugin-babel": "^3.0.3",
-    "webpack": "latest",
+    "webpack": "^3.11.0",
     "webpack-node-externals": "latest"
   },
   "dependencies": {
