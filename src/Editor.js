@@ -6,6 +6,21 @@ import update from 'react-addons-update';
 import { BaseClassnames, PropTypes as Props } from './constants';
 
 import Scrim from './Scrim';
+import Table, {
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+} from 'material-ui/Table';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import Paper from 'material-ui/Paper';
+import Checkbox from 'material-ui/Checkbox';
+import Button from 'material-ui/Button';
+import { Delete, Add, Edit } from 'material-ui-icons'
 
 import * as Schema from './Schema';
 
@@ -28,10 +43,6 @@ const BASE_EDITOR_PROPTYPES = {
 
     // Optional: classes to apply to the editor wrapper
     className: PropTypes.string,
-
-    // Optional.
-    // A function that returns a react node to use for the icon
-    icon: PropTypes.func,
 };
 
 // Returns the column title for the SchemaType `schemaType`.
@@ -58,9 +69,9 @@ const ColumnTitle = props => {
     );
 
     return (
-        <th className={classes}>
+        <TableCell className={classes}>
             { props.children }
-        </th>
+        </TableCell>
     );
 };
 ColumnTitle.displayName = 'ColumnTitle';
@@ -81,6 +92,10 @@ class BaseTable extends React.Component {
         // The thing to edit
         // Can be anything for a base editor (which doesn't actually render an editor)
         object: PropTypes.any,
+
+        // Handler called when the "select all/none" checkbox is clicked.
+        // If the handler isn't provided, the checkbox isn't rendered.
+        onSelectAll: PropTypes.func,
     };
 
     // Render the column titles based on a primitive schema type.
@@ -99,37 +114,35 @@ class BaseTable extends React.Component {
     };
 
     render () {
-        const isPrimitiveSchema = !!this.props.type._isSchemaType;
+        const isPrimitiveSchema = Boolean(this.props.type._isSchemaType);
 
         return (
-            <table className={cx(BaseClassnames.Editor(), this.props.className)}>
-                <thead>
-                <tr className={BaseClassnames.ColumnTitles()}>
-                    <th>
-                        {/* Blank -- just for spacing */}
-                        {/* This is the icon column */}
-                    </th>
-
+            <Table className={cx(BaseClassnames.Editor(), this.props.className)}>
+              <TableHead>
+                <TableRow className={BaseClassnames.ColumnTitles()}>
+                  <TableCell padding="checkbox">
                     {
-                        isPrimitiveSchema
-                            ? this.renderPrimitiveColumns()
-                            : this.renderObjectColumns()
+                        this.props.onSelectAll &&
+                        <Checkbox checked={Math.random() > 0.5} onChange={this.props.onSelectAll} />
                     }
+                  </TableCell>
 
-                    <th>
-                        {/* Blank -- just for spacing */}
-                        {/* This is the delete object column */}
-                    </th>
-                </tr>
-                </thead>
+                  {
+                    isPrimitiveSchema
+                      ? this.renderPrimitiveColumns()
+                      : this.renderObjectColumns()
+                  }
 
-                <tbody>
-
-                {/* Render children in tbody */}
+                  <TableCell>
+                    {/* Blank -- just for spacing */}
+                    {/* This is the delete object column */}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 { this.props.children }
-
-                </tbody>
-            </table>
+              </TableBody>
+            </Table>
         );
     }
 }
@@ -158,17 +171,21 @@ class ObjectEditor extends React.Component {
 
     render () {
         return (
+          <Paper>
+            <Toolbar>
+              <Typography variant="title">Object Editor</Typography>
+            </Toolbar>
             <BaseTable type={this.props.type} className={cx(BaseClassnames.Editor('--object'), this.props.className)}>
                 { /* Object is just an individual object, so there's only one row */ }
                 <ElementRow
                     className={BaseClassnames.ElementRow('--object')}
-                    icon={this.props.icon || undefined}
                     trash={empty /* no trash button for single objects */}
                     type={this.props.type}
                     object={this.props.object}
                     onChange={this.props.onUpdateElement}
                     onRemove={empty /* Can't remove a single object */} />
             </BaseTable>
+          </Paper>
         );
     }
 }
@@ -213,18 +230,27 @@ class ArrayEditor extends React.Component {
 
     render () {
         return (
-            <BaseTable type={this.props.type} className={cx(BaseClassnames.Editor('--array'), this.props.className)}>
+          <Paper>
+            <Toolbar>
+              <Typography variant="title">Array Editor</Typography>
+            </Toolbar>
+            <BaseTable
+              type={this.props.type}
+              className={cx(BaseClassnames.Editor('--array'), this.props.className)}
+              onSelectAll={() => {}} // TODO: handle select all
+            >
 
                 {
                     _.map(
                         this.props.object,
                         (el, idx) => <ElementRow
                             className={BaseClassnames.ElementRow('--array')}
-                            icon={this.props.icon || undefined}
                             type={this.props.type}
                             object={el}
                             onChange={updated => this.props.onUpdateElement(updated, idx)}
-                            onRemove={() => this.props.onRemoveElement(el, idx)}/>
+                            onRemove={() => this.props.onRemoveElement(el, idx)}
+                            onSelect={() => {}} // TODO: handle multi select
+                        />
                     )
                 }
 
@@ -232,6 +258,7 @@ class ArrayEditor extends React.Component {
                     type={this.props.type}
                     onAddElement={this.props.onAddElement}/>
             </BaseTable>
+          </Paper>
         );
     }
 }
@@ -284,7 +311,10 @@ class AddObjectRow extends React.Component {
 
     // Renders the "add element" button
     addButton = () => {
-        return <button onClick={this.add}>Add</button>;
+      return <Button color="primary" variant="raised" onClick={this.add}>
+        New
+        <Add />
+      </Button>
     };
 
     // Handler for updates to the object in state.
@@ -301,7 +331,6 @@ class AddObjectRow extends React.Component {
             <ElementRow
                 className={rowClasses}
                 type={this.props.type}
-                icon={empty /* no icon for the add object row */}
                 trash={this.addButton}
                 object={this.state.object}
                 onChange={this.updateObject}
@@ -342,14 +371,14 @@ class StringCell extends React.Component {
         );
 
         return (
-            <td className={BaseClassnames.Cell('--value')}>
+            <TableCell className={BaseClassnames.Cell('--value')}>
                 <input
                     className={inputClasses}
                     type='text'
                     value={this.props.value || ''}
                     required={this.props.type.required}
                     onChange={evt => this.props.onChange(evt.target.value)}/>
-            </td>
+            </TableCell>
         );
     }
 }
@@ -429,6 +458,7 @@ class ObjectCell extends React.Component {
         // TODO: pull these update/add/remove handlers out of the render func
         // TODO: separate Cells for arrays, since the onUpdateElement function sig is different
         return (
+          <div style={{ position: 'absolute', zIndex: 1 }}>
             <Editor
                 onClickScrim={this.close}
 
@@ -477,23 +507,23 @@ class ObjectCell extends React.Component {
                         return true;
                     }
                 } />
+          </div>
         );
     };
 
     render () {
         return (
-            <td className={BaseClassnames.Cell('--object')}>
-                <button onClick={this.clickEdit}>Edit</button>
+            <TableCell className={BaseClassnames.Cell('--object')}>
+                <Edit onClick={this.clickEdit}/>
 
                 { this.renderEditor() }
-            </td>
+            </TableCell>
         );
     }
 }
 
 // Render an object as a row in a table.
-// The "icon" prop gets render as the furthest-left td, and the
-// "trash" prop gets render as the furthest-right td.
+// The "trash" prop gets render as the furthest-right td.
 const ElementRow = props => {
     // For some key, returns a handler that calls props.onChange with the
     // value of props.object[key].
@@ -520,7 +550,7 @@ const ElementRow = props => {
 
     // The trash button (if the consumer didn't specify one)
     const trashButton = (
-        <button onClick={props.onRemove}>Trash</button>
+      <Delete onClick={props.onRemove} />
     );
 
     // Render a cell based on a primitive SchemaType, a value, and a handler
@@ -578,15 +608,13 @@ const ElementRow = props => {
     );
 
     return (
-        <tr className={rowClasses}>
-            <td>
-                {
-                    // Icon for the element
-                    props.icon
-                        ? props.icon()
-                        : <i>C</i>
-                }
-            </td>
+        <TableRow className={rowClasses}>
+            <TableCell padding="checkbox">
+              {
+                  props.onSelect &&
+                  <Checkbox checked={Math.random() > 0.5} onChange={props.onSelect} />
+              }
+            </TableCell>
 
             {/*
               * Render the "body" of the element -- for an object, cells for each key.
@@ -594,14 +622,14 @@ const ElementRow = props => {
               */}
             { renderElementBody() }
 
-            <td>
+            <TableCell>
                 {
                     props.trash
                         ? props.trash()
                         : trashButton
                 }
-            </td>
-        </tr>
+            </TableCell>
+        </TableRow>
     );
 };
 ElementRow.displayName = 'ElementRow';
@@ -609,9 +637,6 @@ ElementRow.propTypes = {
     // The type of this field -- a SchemaType
     // type: PropTypes.SchemaType.isRequired,
     type: Props.Schema.isRequired,
-
-    // Icon to use for the field
-    icon: PropTypes.func,
 
     // Content for the trash button cell
     trash: PropTypes.func,
@@ -629,6 +654,10 @@ ElementRow.propTypes = {
     //
     // function onRemove () -> void
     onRemove: PropTypes.func.isRequired,
+
+    // Handler called when the "select multiple" checkbox is clicked.
+    // If this handler isn't supplied, the checkbox isn't rendered.
+    onSelect: PropTypes.func,
 
     // Optional extra classes to add to the <tr />
     className: PropTypes.string,
