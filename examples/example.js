@@ -110,7 +110,7 @@ class Wrapper extends React.Component {
             : ObjectEditor;
 
         return (
-        <div>
+        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
             <EditorComponent
                 className='editor--outside'
                 object={this.state.object}
@@ -119,9 +119,16 @@ class Wrapper extends React.Component {
                 onAddElement={this.add.bind(this)}
                 onRemoveElement={this.remove.bind(this)} />
 
-            <p>
-                { JSON.stringify(this.state.object, null, '\t')}
-            </p>
+          <pre style={{
+            fontFamily: 'monospace',
+            background: '#f6f6f6',
+            padding: '6px',
+            boxShadow: '0px 6px 14px 0px #0000003d, 0px 2px 3px 0px #00000040',
+            marginLeft: '10px',
+            marginTop: 0,
+          }}>
+            {JSON.stringify(this.state.object, null, '   ')}
+          </pre>
         </div>
         );
     }
