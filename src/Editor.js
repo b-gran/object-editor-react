@@ -12,6 +12,7 @@ import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
+import Select from 'material-ui/Select'
 import { Add, Delete, Edit } from 'material-ui-icons'
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
@@ -219,12 +220,6 @@ class AddObjectRow extends React.Component {
   }
 }
 
-// The primitive types that we'll use <input /> elements for.
-// Other types will get nested object editors.
-const STRING_INPUT_TYPES = [
-  'string', 'boolean', 'number', 'date'
-];
-
 // A td cell for editing a property whose type is anything but 'object'
 class StringCell extends React.Component {
   static displayName = 'StringCell';
@@ -255,6 +250,43 @@ class StringCell extends React.Component {
           value={this.props.value || ''}
           required={this.props.type.required}
           onChange={evt => this.props.onChange(evt.target.value)}/>
+      </TableCell>
+    );
+  }
+}
+
+// Converts a string to a boolean, using the following rules:
+//    if the input is equal to the string 'true' (case insensitive), return true
+//    otherwise return false
+function stringToBoolean (str) {
+  return str.toLowerCase() === 'true'
+}
+
+// A td cell for editing a property whose type is boolean
+class BooleanCell extends React.Component {
+  static displayName = 'BooleanCell';
+
+  static propTypes = {
+    // The type of this cell
+    type: Props.Schema.isRequired,
+
+    // Current value of this cell
+    value: PropTypes.any,
+
+    // Handler called when the value is modified
+    onChange: PropTypes.func.isRequired,
+  };
+
+  render () {
+    return (
+      <TableCell className={BaseClassnames.Cell('--value')}>
+        <Select
+          native
+          value={String(Boolean(this.props.value))}
+          onChange={evt => this.props.onChange(stringToBoolean(evt.target.value))}>
+          <option value={true}>True</option>
+          <option value={false}>False</option>
+        </Select>
       </TableCell>
     );
   }
@@ -431,11 +463,20 @@ const ElementRow = props => {
 
   // Render a cell based on a primitive SchemaType, a value, and a handler
   const renderCell = (primitiveType, value, handler) => {
-    const isStringType = _.includes(STRING_INPUT_TYPES, primitiveType._type)
+    const CellType = (type => {
+      switch (type) {
+        case 'string':
+        case 'number':
+        case 'date':
+          return StringCell
 
-    const CellType = isStringType
-      ? StringCell
-      : ObjectCell;
+        case 'boolean':
+          return BooleanCell
+
+        default:
+          return ObjectCell
+      }
+    })(primitiveType._type)
 
     return <CellType
       type={primitiveType}
