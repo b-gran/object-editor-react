@@ -11,8 +11,6 @@ import _ from 'lodash';
 
 import './main.css'
 
-const empty = () => null;
-
 const APP_ROOT = document.getElementById('root')
 
 // A deeply nested test schema
