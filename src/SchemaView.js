@@ -135,6 +135,10 @@ class ShapeSchema extends React.Component {
   }
 }
 
+const TRIANGLE_RIGHT = '▶'
+const TRIANGLE_DOWN = '▼'
+const TRIANGLE_EXPANDER_WIDTH = "16px"
+
 class KeyValueSchemaView extends React.Component {
   static displayName = 'KeyValueSchemaView'
   static propTypes = {
@@ -154,7 +158,7 @@ class KeyValueSchemaView extends React.Component {
     if (!this.props.onToggleExpanded) {
       return (
         <Div display="flex" cursor="default">
-          <Div width="16px"/>
+          <Div width={TRIANGLE_EXPANDER_WIDTH} />
           <Div display="flex" flexDirection="row">
             <Div marginRight="10px" css={keyName}
                  onClick={this.props.onToggleExpanded}>{this.props.keyName}:</Div>
@@ -164,32 +168,19 @@ class KeyValueSchemaView extends React.Component {
       )
     }
 
-    if (!this.props.expanded) {
-      return (
-        <Div display="flex" cursor="default">
-          <Div display="flex" width="16px" onClick={this.props.onToggleExpanded}>
-            <Span fontSize="9px" padding="2px">▶</Span>
-          </Div>
-          <Div display="flex" flexDirection="row" onClick={this.props.onToggleExpanded}>
-            <Div marginRight="10px" css={keyName}>{this.props.keyName}:</Div>
-            <Div css={monospace}>{this.props.preview}</Div>
-          </Div>
-        </Div>
-      )
-    }
-
+    const arrow = this.props.expanded ? TRIANGLE_DOWN : TRIANGLE_RIGHT
     return (
       <Div display="flex" cursor="default">
-        <Div display="flex" width="16px" onClick={this.props.onToggleExpanded}>
-          <Span fontSize="9px" padding="2px">▼</Span>
+        <Div display="flex" width={TRIANGLE_EXPANDER_WIDTH} onClick={this.props.onToggleExpanded}>
+          <Span fontSize="9px" padding="2px">{ arrow }</Span>
         </Div>
         <Div display="flex" flexDirection="column">
           <Div display="flex" flexDirection="row" onClick={this.props.onToggleExpanded}>
             <Div marginRight="10px" css={keyName}>{this.props.keyName}:</Div>
-            <Div css={monospace} >{this.props.preview}</Div>
+            <Div css={monospace}>{this.props.preview}</Div>
           </Div>
 
-          <Div>{ this.props.schemaElement }</Div>
+          { this.props.expanded && <Div>{ this.props.schemaElement }</Div> }
         </Div>
       </Div>
     )
