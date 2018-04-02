@@ -98,7 +98,7 @@ export default class SchemaView extends React.Component {
 
         return <Div display="flex" flexDirection="column">
           <Div css={monospace}>ArrayOf</Div>
-          <Div marginLeft="20px"><SchemaView schema={this.props.schema._elementType}/></Div>
+          <SchemaView schema={this.props.schema._elementType}/>
         </Div>
 
       default:
@@ -154,6 +154,10 @@ class KeyValueSchemaView extends React.Component {
   }
 
   render () {
+    const readableKeyName = this.props.keyName === ''
+      ? `""`
+      : this.props.keyName
+
     // Non-expandable key/value pairs
     if (!this.props.onToggleExpanded) {
       return (
@@ -161,7 +165,7 @@ class KeyValueSchemaView extends React.Component {
           <Div width={TRIANGLE_EXPANDER_WIDTH} />
           <Div display="flex" flexDirection="row">
             <Div marginRight="10px" css={keyName}
-                 onClick={this.props.onToggleExpanded}>{this.props.keyName}:</Div>
+                 onClick={this.props.onToggleExpanded}>{readableKeyName}:</Div>
             <Div css={monospace}>{this.props.preview}</Div>
           </Div>
         </Div>
@@ -176,7 +180,7 @@ class KeyValueSchemaView extends React.Component {
         </Div>
         <Div display="flex" flexDirection="column">
           <Div display="flex" flexDirection="row" onClick={this.props.onToggleExpanded}>
-            <Div marginRight="10px" css={keyName}>{this.props.keyName}:</Div>
+            <Div marginRight="10px" css={keyName}>{readableKeyName}:</Div>
             <Div css={monospace}>{this.props.preview}</Div>
           </Div>
 

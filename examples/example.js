@@ -208,6 +208,23 @@ render(
 );
 
 render(
-  <SchemaView schema={schema} />,
+  <div>
+    <SchemaView schema={schema} />
+    <hr />
+  </div>,
+  APP_ROOT.appendChild(document.createElement('div'))
+)
+
+const edgeCaseSchema = {
+  "": Schema.SchemaTypes.string({ required: true }),
+  complexArray: Schema.SchemaTypes.arrayOf(
+    Schema.SchemaTypes.arrayOf({
+      foo: Schema.SchemaTypes.arrayOf(Schema.SchemaTypes.boolean())(),
+    })()
+  )(),
+};
+
+render(
+  <SchemaView schema={edgeCaseSchema} />,
   APP_ROOT.appendChild(document.createElement('div'))
 )
