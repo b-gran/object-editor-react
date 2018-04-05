@@ -1,6 +1,11 @@
 import * as R from 'ramda'
+import { ModalManager } from 'material-ui/Modal'
 
+// Return true if the argument is non-nil
 export const isDefined = R.complement(R.isNil)
+
+// If the argument is an array, returns the argument.
+// Otherwise, returns an array with the argument as its only element.
 export const wrapArray = R.when(R.complement(Array.isArray), R.of)
 
 // Like R.assoc, but respects the property's current enumerability
@@ -64,3 +69,12 @@ export const eventOnce = R.curry((event, f, eventTarget) => {
 
   eventTarget.addEventListener(event, handler)
 })
+
+/* *********************************** *
+ * *********** MATERIAL UI *********** *
+ * *********************************** */
+
+// By default, material-ui modals will hide the scrollbar on the <body />
+// This custom ModalManager (specified as a prop to the Popover) will prevent the
+// Modal from hiding the scroll bar.
+export const NoOverflowModalManager = new ModalManager({ handleContainerOverflow: false })
