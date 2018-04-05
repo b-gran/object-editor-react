@@ -12,8 +12,8 @@ import Table, {
   TableSortLabel,
 } from 'material-ui/Table';
 import Checkbox from 'material-ui/Checkbox';
-import Popover from 'material-ui/Popover'
-import Typography from 'material-ui/Typography'
+import { InfoOutline } from 'material-ui-icons'
+
 import { Div } from 'glamorous'
 import * as glamor from 'glamor'
 
@@ -85,12 +85,17 @@ class ColumnTitle extends React.Component {
     return (
       <TableCell className={classes}>
         <HoverPopover popoverContent={popoverContent}>
-          { this.props.children }
+          <Div display="flex">
+            <Div marginRight="5px">{ this.props.children }</Div>
+            <InfoOutline style={infoOutlineFontSize} />
+          </Div>
         </HoverPopover>
       </TableCell>
     )
   }
 }
+
+const infoOutlineFontSize = { fontSize: '16px' }
 
 export default class BaseTable extends React.Component {
   static displayName = 'BaseTable';
@@ -109,7 +114,9 @@ export default class BaseTable extends React.Component {
 
   // Render the column titles based on a primitive schema type.
   renderPrimitiveColumns = () => {
-    return <ColumnTitle schema={this.props.type}>{columnTitle(this.props.type)}</ColumnTitle>;
+    return <ColumnTitle schema={this.props.type}>
+      {columnTitle(this.props.type)}
+    </ColumnTitle>;
   };
 
   // Render column titles based on a complex object-schema
@@ -117,7 +124,9 @@ export default class BaseTable extends React.Component {
     // A column for each element key
     return Object.keys(this.props.type).map(
       field => (
-        <ColumnTitle key={field} schema={this.props.type[field]}>{field}</ColumnTitle>
+        <ColumnTitle key={field} schema={this.props.type[field]}>
+          {field}
+        </ColumnTitle>
       )
     );
   };
