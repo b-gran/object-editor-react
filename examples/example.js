@@ -218,9 +218,11 @@ render(
 const edgeCaseSchema = {
   "": Schema.SchemaTypes.string({ required: true }),
   complexArray: Schema.SchemaTypes.arrayOf(
-    Schema.SchemaTypes.arrayOf({
-      foo: Schema.SchemaTypes.arrayOf(Schema.SchemaTypes.boolean())(),
-    })()
+    Schema.SchemaTypes.arrayOf(
+      Schema.SchemaTypes.arrayOf({
+        foo: Schema.SchemaTypes.arrayOf(Schema.SchemaTypes.boolean())(),
+      })()
+    )()
   )(),
 };
 
