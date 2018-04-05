@@ -5,8 +5,14 @@ import * as glamor from 'glamor'
 import { Div } from 'glamorous'
 
 import Popover from 'material-ui/Popover'
+import { ModalManager } from 'material-ui/Modal'
 
 import PropTypes from 'prop-types'
+
+// By default, material-ui modals will hide the scrollbar on the <body />
+// This custom ModalManager (specified as a prop to the Popover) will prevent the
+// Modal from hiding the scroll bar.
+const noOverflowModalManager = new ModalManager({ handleContainerOverflow: false })
 
 // Performance: track the most recent mouse event for all Hovers.
 const lastMousePosition = (() => {
@@ -120,15 +126,16 @@ export class HoverPopover extends React.Component {
         <Popover
           ref={popoverContent => { this._refs.popoverContentElement = popoverContent }}
           className={`${noPtrEvents}`}
+          manager={noOverflowModalManager}
           open={this.state.hoverChildren}
           anchorEl={this._refs.popoverAnchorElement}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'center',
+            horizontal: 'left',
           }}
           transformOrigin={{
             vertical: 'top',
-            horizontal: 'center',
+            horizontal: 'left',
           }}
           disableRestoreFocus>
           <Div pointerEvents="auto">
@@ -140,4 +147,6 @@ export class HoverPopover extends React.Component {
   }
 }
 
+// This property is needed on the popover to prevent mouse events on the Modal backdrop
+// from hiding the Modal.
 const noPtrEvents = glamor.css({ pointerEvents: 'none' })
