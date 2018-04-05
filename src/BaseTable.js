@@ -117,7 +117,7 @@ export default class BaseTable extends React.Component {
     // A column for each element key
     return Object.keys(this.props.type).map(
       field => (
-        <ColumnTitle schema={this.props.type}>{field}</ColumnTitle>
+        <ColumnTitle key={field} schema={this.props.type}>{field}</ColumnTitle>
       )
     );
   };

@@ -128,7 +128,7 @@ class ShapeSchema extends React.Component {
     return <div>
       {
         _.toPairs(this.props.schema).map(([ key, schema ]) =>
-          <SchemaView schema={schema} keyName={key} />
+          <SchemaView key={key} schema={schema} keyName={key} />
         )
       }
     </div>

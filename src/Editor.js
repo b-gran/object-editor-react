@@ -75,6 +75,7 @@ export class ArrayEditor extends React.Component {
             _.map(
               this.props.object,
               (el, idx) => <ElementRow
+                key={idx}
                 className={BaseClassnames.ElementRow('--array')}
                 type={this.props.type}
                 object={el}
@@ -462,7 +463,7 @@ const ElementRow = props => {
   );
 
   // Render a cell based on a primitive SchemaType, a value, and a handler
-  const renderCell = (primitiveType, value, handler) => {
+  const renderCell = (primitiveType, value, handler, key) => {
     const CellType = (type => {
       switch (type) {
         case 'string':
@@ -479,6 +480,7 @@ const ElementRow = props => {
     })(primitiveType._type)
 
     return <CellType
+      key={key}
       type={primitiveType}
       value={value}
       onChange={handler}/>
@@ -513,7 +515,8 @@ const ElementRow = props => {
         return renderCell(
           props.type[key],
           value,
-          getChangeHandler(key)
+          getChangeHandler(key),
+          key,
         );
       }
     );
