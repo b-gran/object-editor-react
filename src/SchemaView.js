@@ -96,9 +96,12 @@ export default class SchemaView extends React.Component {
             expanded={this.state.expanded}/>
         }
 
-        return <Div display="flex" flexDirection="column">
-          <Div css={monospace}>ArrayOf</Div>
-          <SchemaView schema={this.props.schema._elementType}/>
+        return <Div display="flex" cursor="default">
+          <Div width={TRIANGLE_EXPANDER_WIDTH} />
+          <Div display="flex" flexDirection="column">
+            <Div css={monospace}>ArrayOf</Div>
+            <SchemaView schema={this.props.schema._elementType}/>
+          </Div>
         </Div>
 
       default:
