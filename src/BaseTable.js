@@ -12,10 +12,16 @@ import Table, {
   TableSortLabel,
 } from 'material-ui/Table';
 import Checkbox from 'material-ui/Checkbox';
+import Popover from 'material-ui/Popover'
+import Typography from 'material-ui/Typography'
+import { Div } from 'glamorous'
+import * as glamor from 'glamor'
 
 import { BaseClassnames, PropTypes as Props } from './constants';
 
 import * as Schema from './Schema';
+import SchemaView from './SchemaView'
+import { HoverPopover } from './HoverPopover'
 
 // Base propTypes for all editor variants
 export const BASE_EDITOR_PROPTYPES = {
@@ -50,29 +56,41 @@ function columnTitle (schemaType) {
   return _.capitalize(schemaType._type);
 }
 
-
 // Returns the column title for the SchemaType `schemaType`.
 // A <th /> Element with a the class ".editor__column-title"
-const ColumnTitle = props => {
-  const classes = cx(
-    BaseClassnames.ColumnTitle(),
-    props.className
-  );
+class ColumnTitle extends React.Component {
+  static displayName = 'ColumnTitle'
+  static propTypes = {
+    // Optional extra classes for the <th />
+    className: PropTypes.string,
 
-  return (
-    <TableCell className={classes}>
-      {props.children}
-    </TableCell>
-  );
-};
-ColumnTitle.displayName = 'ColumnTitle';
-ColumnTitle.propTypes = {
-  // Optional extra classes for the <th />
-  className: PropTypes.string,
+    // Children of the <th />
+    children: PropTypes.node,
 
-  // Children of the <th />
-  children: PropTypes.node,
-};
+    schema: Props.Schema.isRequired,
+  }
+
+  render () {
+    const classes = cx(
+      BaseClassnames.ColumnTitle(),
+      this.props.className
+    )
+
+    const popoverContent = (
+      <Div padding="15px">
+        <SchemaView schema={this.props.schema}/>
+      </Div>
+    )
+
+    return (
+      <TableCell className={classes}>
+        <HoverPopover popoverContent={popoverContent}>
+          { this.props.children }
+        </HoverPopover>
+      </TableCell>
+    )
+  }
+}
 
 export default class BaseTable extends React.Component {
   static displayName = 'BaseTable';
@@ -91,7 +109,7 @@ export default class BaseTable extends React.Component {
 
   // Render the column titles based on a primitive schema type.
   renderPrimitiveColumns = () => {
-    return <ColumnTitle>{columnTitle(this.props.type)}</ColumnTitle>;
+    return <ColumnTitle schema={this.props.type}>{columnTitle(this.props.type)}</ColumnTitle>;
   };
 
   // Render column titles based on a complex object-schema
@@ -99,7 +117,7 @@ export default class BaseTable extends React.Component {
     // A column for each element key
     return Object.keys(this.props.type).map(
       field => (
-        <ColumnTitle>{field}</ColumnTitle>
+        <ColumnTitle schema={this.props.type}>{field}</ColumnTitle>
       )
     );
   };
