@@ -17,9 +17,15 @@ import { Add, Delete, Edit } from 'material-ui-icons'
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
 
+import ReactDOM from 'react-dom'
+window.findDOMNode = ReactDOM.findDOMNode.bind(ReactDOM)
+
 import * as Schema from './Schema';
 
+import { Div } from 'glamorous'
+
 import _ from 'lodash';
+import Pin from './Pin'
 
 const empty = () => null;
 
@@ -331,11 +337,6 @@ class ObjectCell extends React.Component {
   // the cell is toggled open)
   // TODO: too many conditionals here -- separate into different Cell classes
   renderEditor = () => {
-    // Cell is closed -- render nothing
-    if (!this.state.open) {
-      return <div></div>
-    }
-
     // Whether or not to use an Array editor
     const useArrayEditor = (
       // Use an array editor if the SchemaType is one of the array variants (array or arrayOf)
@@ -347,8 +348,8 @@ class ObjectCell extends React.Component {
 
     // The Editor component to use
     const Editor = useArrayEditor
-      ? ScrimArrayEditor
-      : ScrimObjectEditor;
+      ? ArrayEditor
+      : ObjectEditor
 
     // The type to pass to the editor -- if it's an object editor, that's just the current type.
     // If it's an array editor, we need to use the array's type.
@@ -367,65 +368,66 @@ class ObjectCell extends React.Component {
     // TODO: pull these update/add/remove handlers out of the render func
     // TODO: separate Cells for arrays, since the onUpdateElement function sig is different
     return (
-      <div style={{ position: 'absolute', zIndex: 1 }}>
-        <Editor
-          onClickScrim={this.close}
-
-          className={BaseClassnames.Editor('--inside')}
-          type={editorType}
-          object={this.props.value}
-          onUpdateElement={
-            /* This function needs to handle array and object property updates */
-            (el, updatedIndex) => {
-              // Array update
-              if (typeof updatedIndex !== 'undefined') {
-                return this.props.onChange(
-                  update(
-                    arrayValue,
-                    {
-                      [updatedIndex]: {
-                        $set: el,
-                      }
+      <Editor
+        className={BaseClassnames.Editor('--inside')}
+        type={editorType}
+        object={this.props.value}
+        onUpdateElement={
+          /* This function needs to handle array and object property updates */
+          (el, updatedIndex) => {
+            // Array update
+            if (typeof updatedIndex !== 'undefined') {
+              return this.props.onChange(
+                update(
+                  arrayValue,
+                  {
+                    [updatedIndex]: {
+                      $set: el,
                     }
-                  )
-                );
-              }
-
-              // "set" object property update
-              return this.props.onChange(el);
-            }
-          }
-          onRemoveElement={
-            // Tell the consumer an element was removed
-            (el, droppedIndex) => this.props.onChange(
-              // Without mutating the array, reject the dropped index
-              _.reject(
-                arrayValue,
-                (__, idx) => idx === droppedIndex
-              )
-            )
-          }
-          onAddElement={
-            (el) => {
-              // Pass element to consumer
-              this.props.onChange(
-                [...arrayValue, el]
+                  }
+                )
               );
-
-              // Clear the nested add row
-              return true;
             }
-          }/>
-      </div>
+
+            // "set" object property update
+            return this.props.onChange(el);
+          }
+        }
+        onRemoveElement={
+          // Tell the consumer an element was removed
+          (el, droppedIndex) => this.props.onChange(
+            // Without mutating the array, reject the dropped index
+            _.reject(
+              arrayValue,
+              (__, idx) => idx === droppedIndex
+            )
+          )
+        }
+        onAddElement={
+          (el) => {
+            // Pass element to consumer
+            this.props.onChange(
+              [...arrayValue, el]
+            );
+
+            // Clear the nested add row
+            return true;
+          }
+        }/>
     );
   };
 
   render () {
     return (
       <TableCell className={BaseClassnames.Cell('--object')}>
-        <Edit onClick={this.clickEdit}/>
-
-        {this.renderEditor()}
+        <Pin visible={this.state.open} position="bottom" anchor="start" alignment="end"
+             pinContent={this.renderEditor()}
+             onScrimClick={this.state.open ? this.close : () => {}}
+        >
+          <Div position="relative" display="block">
+            <Edit onClick={this.clickEdit}/>
+          </Div>
+        </Pin>
       </TableCell>
     );
   }
