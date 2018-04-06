@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import { findDOMNode } from 'react-dom';
+import ReactDOM from 'react-dom'
 
 // Mapping of Scrims -> scrim click handlers
 const privates = new WeakMap();
@@ -75,4 +76,45 @@ export default function (Component) {
             return <Component { ...this.props } />;
         }
     };
+}
+
+export class ScrimComponent extends React.Component {
+  static displayName = 'ScrimComponent';
+
+  static propTypes = {
+    // Handler called when the scrim is clicked
+    onClickScrim: PropTypes.func.isRequired,
+
+    disabled: PropTypes.bool,
+  };
+
+  constructor (props) {
+    super(props);
+
+    this.handleRootClick = evt => {
+      // Performance: skip expensive DOM operations if the consumer
+      // tells us it's safe.
+      if (this.props.disabled) {
+        return
+      }
+
+      if (ReactDOM.findDOMNode(this).contains(evt.target)) {
+        return
+      }
+
+      return this.props.onClickScrim(evt)
+    }
+  }
+
+  componentDidMount () {
+    document.body.addEventListener('click', this.handleRootClick)
+  }
+
+  componentWillUnmount () {
+    document.body.removeEventListener('click', this.handleRootClick)
+  }
+
+  render () {
+    return this.props.children
+  }
 }
