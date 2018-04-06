@@ -14,6 +14,7 @@ import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Select from 'material-ui/Select'
 import { Add, Delete, Edit } from 'material-ui-icons'
+import IconButton from 'material-ui/IconButton';
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
 
@@ -425,7 +426,9 @@ class ObjectCell extends React.Component {
              onScrimClick={this.state.open ? this.close : () => {}}
         >
           <Div position="relative" display="block">
-            <Edit onClick={this.clickEdit}/>
+            <IconButton color="default" aria-label="Edit value" onClick={this.clickEdit}>
+              <Edit />
+            </IconButton>
           </Div>
         </Pin>
       </TableCell>
@@ -461,7 +464,9 @@ const ElementRow = props => {
 
   // The trash button (if the consumer didn't specify one)
   const trashButton = (
-    <Delete onClick={props.onRemove}/>
+    <IconButton color="default" aria-label="Delete element" onClick={props.onRemove}>
+      <Delete />
+    </IconButton>
   );
 
   // Render a cell based on a primitive SchemaType, a value, and a handler
