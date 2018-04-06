@@ -71,6 +71,18 @@ export const eventOnce = R.curry((event, f, eventTarget) => {
 })
 
 /* *********************************** *
+ * ***********    STRING   *********** *
+ * *********************************** */
+
+export const capitalize = str => {
+  if (!str) {
+    return str
+  }
+
+  return `${str[0].toUpperCase()}${str.slice(1)}`
+}
+
+/* *********************************** *
  * *********** MATERIAL UI *********** *
  * *********************************** */
 

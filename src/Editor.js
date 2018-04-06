@@ -5,7 +5,6 @@ import update from 'react-addons-update';
 
 import { BaseClassnames, PropTypes as Props } from './constants';
 
-import Scrim from './Scrim';
 import { TableCell, TableRow } from 'material-ui/Table';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
@@ -22,11 +21,13 @@ import ReactDOM from 'react-dom'
 window.findDOMNode = ReactDOM.findDOMNode.bind(ReactDOM)
 
 import * as Schema from './Schema';
+import { getSchemaTypeIdentifier } from './SchemaView'
 
 import { Div } from 'glamorous'
 
 import _ from 'lodash';
 import Pin from './Pin'
+import { capitalize } from './util'
 
 const empty = () => null;
 
@@ -70,7 +71,7 @@ export class ArrayEditor extends React.Component {
     return (
       <Paper>
         <Toolbar>
-          <Typography variant="title">Array Editor</Typography>
+          <Typography variant="title">Array</Typography>
         </Toolbar>
         <BaseTable
           type={this.props.type}
@@ -102,8 +103,6 @@ export class ArrayEditor extends React.Component {
   }
 }
 
-const ScrimArrayEditor = Scrim(ArrayEditor);
-
 // A tabular editor for editing a single JSON object
 class ObjectEditor extends React.Component {
   static displayName = 'ObjectEditor';
@@ -129,10 +128,14 @@ class ObjectEditor extends React.Component {
   };
 
   render () {
+    const editorTitle = typeof this.props.type === 'object'
+      ? 'Object'
+      : capitalize(getSchemaTypeIdentifier(this.props.type))
+
     return (
       <Paper>
         <Toolbar>
-          <Typography variant="title">Object Editor</Typography>
+          <Typography variant="title">{ editorTitle }</Typography>
         </Toolbar>
         <BaseTable type={this.props.type}
                    className={cx(BaseClassnames.Editor('--object'), this.props.className)}>
@@ -149,8 +152,6 @@ class ObjectEditor extends React.Component {
     );
   }
 }
-
-const ScrimObjectEditor = Scrim(ObjectEditor);
 
 // A table row for adding a new element to an array
 // TODO: error handling, validation

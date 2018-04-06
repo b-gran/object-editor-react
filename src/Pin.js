@@ -254,6 +254,8 @@ class Pin extends React.Component {
 
   render () {
     const [x, y] = (() => {
+      // We can't compute the position until we have refs for the main and hover content.
+      // We also don't need to compute the position if the Pin is hidden.
       if (!this.props.visible || !this._refs.mainContent || !this._refs.hoverContent) {
         return [ 0, 0 ]
       }

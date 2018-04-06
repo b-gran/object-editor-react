@@ -28,7 +28,7 @@ const SCHEMA_TYPE_IDENTIFIER = {
 
 // Assumes schema is already a valid Schema.
 // Returns the corresponding type identifier (a string from the object above) for the schema.
-function getSchemaTypeIdentifier (schema) {
+export function getSchemaTypeIdentifier (schema) {
   return schema._isSchemaType
     ? schema._type
     : SCHEMA_TYPE_IDENTIFIER.shape
