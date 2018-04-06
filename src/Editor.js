@@ -420,7 +420,7 @@ class ObjectCell extends React.Component {
   render () {
     return (
       <TableCell className={BaseClassnames.Cell('--object')}>
-        <Pin visible={this.state.open} position="bottom" anchor="start" alignment="end"
+        <Pin visible={this.state.open} position="bottom" anchor="middle" alignment="middle"
              pinContent={this.renderEditor()}
              onScrimClick={this.state.open ? this.close : () => {}}
         >

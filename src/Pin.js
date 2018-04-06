@@ -236,34 +236,25 @@ function clampRectangle (position, length, min, max) {
   )
 }
 
-const NOT_LOADED = Symbol('not loaded')
-
 class Pin extends React.Component {
   constructor (props) {
     super(props)
 
     this._refs = {
-      mainContent: NOT_LOADED,
-      hoverContent: NOT_LOADED,
+      mainContent: null,
+      hoverContent: null,
     }
-
-    this.isDOMRendered = () => R.values(this._refs).every(el => el !== NOT_LOADED)
 
     // Create a handler for keeping track of DOM across renders.
     // Triggers a render (after reflow) if all DOM hasn't loaded yet.
     this.trackRef = refName => el => {
       this._refs[refName] = el
-      return !this.isDOMRendered() && waitForReflow(() => this.forceUpdate())
     }
   }
 
   render () {
     const [x, y] = (() => {
       if (!this.props.visible || !this._refs.mainContent || !this._refs.hoverContent) {
-        return [ 0, 0 ]
-      }
-
-      if (!this.isDOMRendered()) {
         return [ 0, 0 ]
       }
 
@@ -294,7 +285,7 @@ class Pin extends React.Component {
               left: `${x}px`,
               top: `${y}px`,
               visibility: this.props.visible ? 'visible' : 'hidden',
-              zIndex: '1',
+              zIndex: '1', // TODO: this should be a prop
             }}
             ref={this.trackRef('hoverContent')}>
             {this.props.pinContent}
