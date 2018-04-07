@@ -111,8 +111,16 @@ export default class BaseTable extends React.Component {
     // If the handler isn't provided, the checkbox isn't rendered.
     onSelectAll: PropTypes.func,
 
+    // State of the select all button
     checked: PropTypes.bool,
     indeterminate: PropTypes.bool,
+
+    // State of the table's pagination
+    totalElements: PropTypes.number,
+    rowsPerPage: PropTypes.number,
+    page: PropTypes.number,
+
+    onChangePage: PropTypes.func,
   };
 
   // Render the column titles based on a primitive schema type.
@@ -136,6 +144,9 @@ export default class BaseTable extends React.Component {
 
   render () {
     const isPrimitiveSchema = Boolean(this.props.type._isSchemaType);
+
+    // Used to render the footer for array schemas
+    const numberColumns = 2 + Object.keys(this.props.type).length
 
     return (
       <Table className={cx(BaseClassnames.Editor(), this.props.className)}>
@@ -163,6 +174,21 @@ export default class BaseTable extends React.Component {
         <TableBody>
           {this.props.children}
         </TableBody>
+
+        {
+          this.props.onSelectAll &&
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                colSpan={numberColumns}
+                count={this.props.totalElements}
+                rowsPerPage={this.props.rowsPerPage}
+                page={this.props.page}
+                onChangePage={this.props.onChangePage}
+              />
+            </TableRow>
+          </TableFooter>
+        }
       </Table>
     );
   }

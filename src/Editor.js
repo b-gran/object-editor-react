@@ -66,6 +66,9 @@ export class ArrayEditor extends React.Component {
     // function onAddElement (newElement: Object) -> void
     // where newElement is the element to add
     onAddElement: PropTypes.func.isRequired,
+
+    // Optimize performance by only creating DOM if the parent is visible
+    parentVisible: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -74,6 +77,7 @@ export class ArrayEditor extends React.Component {
 
   state = {
     selected: new Map(),
+    page: 0,
   }
 
   render () {
@@ -85,6 +89,8 @@ export class ArrayEditor extends React.Component {
     const toolbar = this.state.selected.size > 0
       ? <Toolbar className={`${toolbarBackground}`}><Typography variant="subheading">{ this.state.selected.size } selected</Typography></Toolbar>
       : <Toolbar><Typography variant="title">Array</Typography></Toolbar>
+
+    const elementCount = this.props.object ? this.props.object.length : 0
 
     return (
       <Paper>
@@ -107,12 +113,17 @@ export class ArrayEditor extends React.Component {
           }}
           checked={allElementsSelected}
           indeterminate={!allElementsSelected && this.state.selected.size > 0}
+          totalElements={elementCount}
+          rowsPerPage={10}
+          page={this.state.page}
+          onChangePage={(evt, page) => this.setState({ page })}
         >
 
           {
             _.map(
               this.props.object,
               (el, idx) => <ElementRow
+                parentVisible={this.props.parentVisible}
                 key={idx}
                 className={BaseClassnames.ElementRow('--array')}
                 type={this.props.type}
@@ -174,6 +185,9 @@ class ObjectEditor extends React.Component {
     // function onUpdateElement (updatedObject) -> void
     // updatedObject is the current object with updates applied
     onUpdateElement: PropTypes.func.isRequired,
+
+    // Optimize performance by only creating DOM if the parent is visible
+    parentVisible: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -194,6 +208,7 @@ class ObjectEditor extends React.Component {
                    className={cx(BaseClassnames.Editor('--object'), this.props.className)}>
           {/* Object is just an individual object, so there's only one row */}
           <ElementRow
+            parentVisible={this.props.parentVisible}
             className={BaseClassnames.ElementRow('--object')}
             trash={empty /* no trash button for single objects */}
             type={this.props.type}
@@ -368,11 +383,26 @@ class ObjectCell extends React.Component {
 
     // Handler called when the value is modified
     onChange: PropTypes.func.isRequired,
+
+    // Optimize performance by only creating DOM if the parent is visible
+    parentVisible: PropTypes.bool,
   };
 
   state = {
     open: false
   };
+
+  // Performance: prevent re-renders of the nested editors unless
+  // the value changes or the editor is toggled open/closed.
+  // Note: the component is ridiculously slow if the nested editors need
+  // to be re-rendered.
+  shouldComponentUpdate (nextProps, nextState) {
+    return (
+      this.props.value !== nextProps.value ||
+      this.state.open !== nextState.open ||
+      this.props.parentVisible !== nextProps.parentVisible
+    )
+  }
 
   // Toggle open the editor when the edit button is clicked.
   clickEdit = evt => {
@@ -424,6 +454,7 @@ class ObjectCell extends React.Component {
     // TODO: separate Cells for arrays, since the onUpdateElement function sig is different
     return (
       <Editor
+        parentVisible={this.state.open}
         className={BaseClassnames.Editor('--inside')}
         type={editorType}
         object={this.props.value}
@@ -473,6 +504,10 @@ class ObjectCell extends React.Component {
   };
 
   render () {
+    if (typeof this.props.parentVisible === 'boolean' && !this.props.parentVisible) {
+      return null
+    }
+
     return (
       <TableCell className={BaseClassnames.Cell('--object')}>
         <Pin visible={this.state.open} position="bottom" anchor="middle" alignment="middle"
@@ -541,6 +576,7 @@ const ElementRow = props => {
     })(primitiveType._type)
 
     return <CellType
+      parentVisible={props.parentVisible}
       key={key}
       type={primitiveType}
       value={value}
@@ -645,6 +681,9 @@ ElementRow.propTypes = {
 
   // Optional extra classes to add to the <tr />
   className: PropTypes.string,
+
+  // Optimize performance by only creating DOM if the parent is visible
+  parentVisible: PropTypes.bool,
 };
 
 export { ObjectEditor };
