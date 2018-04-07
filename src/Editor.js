@@ -33,10 +33,6 @@ import { capitalize, cloneMap } from './util'
 
 const empty = () => null;
 
-const toolbarBackground = glamor.css({
-  background: '#f5015622',
-})
-
 // A tabular editor for editing an array of JSON objects in real time
 export class ArrayEditor extends React.Component {
   static displayName = 'Editor';
@@ -193,18 +189,23 @@ export class ArrayEditor extends React.Component {
   }
 }
 
+const toolbarDefault = glamor.css({
+  justifyContent: 'space-between',
+})
+const toolbarSelected = glamor.css({
+  background: '#f5015622',
+})
+
 const ArrayToolbar = props => {
   if (props.size === 0) {
-    return <Toolbar><Typography variant="title">Array</Typography></Toolbar>
+    return <Toolbar className={`${toolbarDefault}`}><Typography variant="title">Array</Typography></Toolbar>
   }
 
-  return <Toolbar className={`${toolbarBackground}`}>
-    <Div display="flex" justifyContent="space-between">
-      <Typography variant="subheading">{ props.size } selected</Typography>
-      <IconButton color="default" aria-label="Delete selected elements" onClick={props.onDeleteAll}>
-        <Delete />
-      </IconButton>
-    </Div>
+  return <Toolbar className={`${toolbarDefault} ${toolbarSelected}`}>
+    <Typography variant="subheading">{ props.size } selected</Typography>
+    <IconButton color="default" aria-label="Delete selected elements" onClick={props.onDeleteAll}>
+      <Delete />
+    </IconButton>
   </Toolbar>
 }
 ArrayToolbar.displayName = 'ArrayToolbar'
