@@ -8,6 +8,7 @@ import { PropTypes as Props } from '../src/constants'
 
 import update from 'react-addons-update';
 import _ from 'lodash';
+import * as R from 'ramda'
 
 import './main.css'
 import SchemaView from '../src/SchemaView'
@@ -134,28 +135,30 @@ class Wrapper extends React.Component {
 }
 
 const b = <Wrapper
-    initialObject={[
-        {
-            foo: 'something',
-            bar: 4,
-            baz: {
-                biz: 3,
-                booz: {
-                    barz: {
-                        nested: 2
-                    }
-                }
-            }
-        },
+  initialObject={[
+    {
+      foo: 'something',
+      bar: 4,
+      baz: {
+        biz: 3,
+        booz: {
+          barz: {
+            nested: 2
+          }
+        }
+      }
+    },
 
-        {
-            foo: 'baz baz',
-        },
+    {
+      foo: 'baz baz',
+    },
 
-        {
-            foo: 'baz baz',
-        },
-    ]}
+    {
+      foo: 'baz baz',
+    },
+
+    ...R.times(() => ({}), 20)
+  ]}
     type={schema} />;
 
 render(

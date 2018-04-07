@@ -24,12 +24,17 @@ import * as Schema from './Schema';
 import { getSchemaTypeIdentifier } from './SchemaView'
 
 import { Div } from 'glamorous'
+import * as glamor from 'glamor'
 
 import _ from 'lodash';
 import Pin from './Pin'
-import { capitalize } from './util'
+import { capitalize, cloneMap } from './util'
 
 const empty = () => null;
+
+const toolbarBackground = glamor.css({
+  background: '#f5015622',
+})
 
 // A tabular editor for editing an array of JSON objects in real time
 export class ArrayEditor extends React.Component {
@@ -67,16 +72,41 @@ export class ArrayEditor extends React.Component {
     className: '',
   };
 
+  state = {
+    selected: new Map(),
+  }
+
   render () {
+    // TODO: is there an edge case here with adding/removing elements
+    const allElementsSelected = this.props.object
+      ? this.state.selected.size === this.props.object.length
+      : false
+
+    const toolbar = this.state.selected.size > 0
+      ? <Toolbar className={`${toolbarBackground}`}><Typography variant="subheading">{ this.state.selected.size } selected</Typography></Toolbar>
+      : <Toolbar><Typography variant="title">Array</Typography></Toolbar>
+
     return (
       <Paper>
-        <Toolbar>
-          <Typography variant="title">Array</Typography>
-        </Toolbar>
+        { toolbar }
         <BaseTable
           type={this.props.type}
           className={cx(BaseClassnames.Editor('--array'), this.props.className)}
-          onSelectAll={() => {}} // TODO: handle select all
+          onSelectAll={() => {
+            if (allElementsSelected) {
+              return this.setState({
+                selected: new Map(),
+              })
+            }
+
+            const selectAll = new Map()
+            this.props.object.forEach((el, idx) => selectAll.set(idx, true))
+            return this.setState({
+              selected: selectAll,
+            })
+          }}
+          checked={allElementsSelected}
+          indeterminate={!allElementsSelected && this.state.selected.size > 0}
         >
 
           {
@@ -88,8 +118,31 @@ export class ArrayEditor extends React.Component {
                 type={this.props.type}
                 object={el}
                 onChange={updated => this.props.onUpdateElement(updated, idx)}
-                onRemove={() => this.props.onRemoveElement(el, idx)}
-                onSelect={() => {}} // TODO: handle multi select
+                onRemove={() => {
+                  const removeElement = cloneMap(this.state.selected)
+                  removeElement.delete(idx)
+
+                  this.props.onRemoveElement(el, idx)
+
+                  this.setState({
+                    selected: removeElement,
+                  })
+                }}
+                isSelected={this.state.selected.has(idx)}
+                onSelect={() => {
+                  const isSelected = Boolean(this.state.selected.get(idx))
+
+                  const selectElement = cloneMap(this.state.selected)
+                  if (isSelected) {
+                    selectElement.delete(idx)
+                  } else {
+                    selectElement.set(idx, true)
+                  }
+
+                  return this.setState({
+                    selected: selectElement,
+                  })
+                }}
               />
             )
           }
@@ -540,7 +593,7 @@ const ElementRow = props => {
       <TableCell padding="checkbox">
         {
           props.onSelect &&
-          <Checkbox checked={Math.random() > 0.5} onChange={props.onSelect}/>
+          <Checkbox checked={props.isSelected} onChange={props.onSelect}/>
         }
       </TableCell>
 
@@ -586,6 +639,9 @@ ElementRow.propTypes = {
   // Handler called when the "select multiple" checkbox is clicked.
   // If this handler isn't supplied, the checkbox isn't rendered.
   onSelect: PropTypes.func,
+
+  // If true (and if onSelect is supplied), renders a checked Checkbox
+  isSelected: PropTypes.bool,
 
   // Optional extra classes to add to the <tr />
   className: PropTypes.string,

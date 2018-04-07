@@ -70,6 +70,14 @@ export const eventOnce = R.curry((event, f, eventTarget) => {
   eventTarget.addEventListener(event, handler)
 })
 
+export const cloneMap = map => {
+  const clone = new Map()
+  for (const [key, value] of map) {
+    clone.set(key, value)
+  }
+  return clone
+}
+
 /* *********************************** *
  * ***********    STRING   *********** *
  * *********************************** */

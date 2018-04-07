@@ -110,6 +110,9 @@ export default class BaseTable extends React.Component {
     // Handler called when the "select all/none" checkbox is clicked.
     // If the handler isn't provided, the checkbox isn't rendered.
     onSelectAll: PropTypes.func,
+
+    checked: PropTypes.bool,
+    indeterminate: PropTypes.bool,
   };
 
   // Render the column titles based on a primitive schema type.
@@ -141,7 +144,7 @@ export default class BaseTable extends React.Component {
             <TableCell padding="checkbox">
               {
                 this.props.onSelectAll &&
-                <Checkbox checked={Math.random() > 0.5} onChange={this.props.onSelectAll}/>
+                <Checkbox checked={this.props.checked} indeterminate={this.props.indeterminate} onChange={this.props.onSelectAll}/>
               }
             </TableCell>
 
