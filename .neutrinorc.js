@@ -12,6 +12,7 @@ module.exports = {
     // Entry point files for development only
     mains: {
       mainExample: path.join(EXAMPLES_DIR, 'example.js'),
+      githubExample: path.join(EXAMPLES_DIR, 'github-example.js'),
     },
 
     library: {
@@ -42,7 +43,7 @@ module.exports = {
     // Set up builds of the library
     neutrino => {
       const options = neutrino.options.library
-      neutrino.config.when(neutrino.options.command === 'build', () => {
+      neutrino.config.when(neutrino.options.command === 'build:library', () => {
         // We build as a library, so don't use any webpack chunking.
         // If these plugins are used, the library module won't be importable
         // because the dependencies in the chunk will be missing.

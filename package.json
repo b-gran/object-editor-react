@@ -4,7 +4,7 @@
   "description": "A React-based JSON object editor",
   "main": "index.js",
   "scripts": {
-    "build": "neutrino build",
+    "build": "neutrino build:library",
     "start": "neutrino start",
     "test": "neutrino test",
     "test:watch": "neutrino test --watch"
