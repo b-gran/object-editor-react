@@ -29,7 +29,11 @@ export class HoverPopover extends React.Component {
     // May only be specified when the component mounts.
     hoverEndDurationMs: PropTypes.number,
 
+    // Contents of the popover
     popoverContent: PropTypes.node.isRequired,
+
+    // Styles to apply to the main content/popover wrapper
+    containerStyles: PropTypes.object,
   }
 
   _refs = {
@@ -113,8 +117,10 @@ export class HoverPopover extends React.Component {
   }
 
   render () {
+    const { containerStyles = {} } = this.props
     return (
-      <div onMouseMove={this.handleComponentMove}
+      <div style={containerStyles}
+           onMouseMove={this.handleComponentMove}
            ref={popoverAnchor => { this._refs.popoverAnchorElement = popoverAnchor }}>
         {this.props.children}
         <Popover

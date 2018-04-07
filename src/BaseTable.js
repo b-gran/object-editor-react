@@ -84,9 +84,12 @@ class ColumnTitle extends React.Component {
 
     return (
       <TableCell className={classes}>
-        <HoverPopover hoverDurationMs={300} popoverContent={popoverContent}>
-          <Div display="flex" cursor="default">
-            <Div marginRight="5px">{ this.props.children }</Div>
+        <HoverPopover
+          hoverDurationMs={300}
+          popoverContent={popoverContent}
+          containerStyles={{ display: 'inline-flex' }}>
+          <Div display="inline-flex" cursor="default">
+            <Div marginRight="5px">{this.props.children}</Div>
             <InfoOutline style={infoOutlineFontSize} />
           </Div>
         </HoverPopover>

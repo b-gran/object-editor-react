@@ -158,7 +158,10 @@ const b = <Wrapper
       foo: 'baz baz',
     },
 
-    ...R.times(() => ({}), 20)
+    {},
+    {},
+    {},
+    {},
   ]}
     type={schema} />;
 

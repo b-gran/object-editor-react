@@ -75,7 +75,7 @@ export class ArrayEditor extends React.Component {
     selected: new Map(),
 
     page: 0,
-    rowsPerPage: 10,
+    rowsPerPage: 5,
   }
 
   handleDeleteElements (elementIndices) {
