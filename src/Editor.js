@@ -111,10 +111,6 @@ export class ArrayEditor extends React.Component {
       ? this.state.selected.size === this.props.object.length
       : false
 
-    const toolbar = this.state.selected.size > 0
-      ? <Toolbar className={`${toolbarBackground}`}><Typography variant="subheading">{ this.state.selected.size } selected</Typography></Toolbar>
-      : <Toolbar><Typography variant="title">Array</Typography></Toolbar>
-
     const elementCount = this.props.object ? this.props.object.length : 0
 
     const visibleElements = this.props.object &&
@@ -127,7 +123,9 @@ export class ArrayEditor extends React.Component {
 
     return (
       <Paper>
-        { toolbar }
+        <ArrayToolbar
+          onDeleteAll={() => this.handleDeleteElements(Array.from(this.state.selected.keys()))}
+          size={this.state.selected.size} />
         <BaseTable
           type={this.props.type}
           className={cx(BaseClassnames.Editor('--array'), this.props.className)}
@@ -193,6 +191,26 @@ export class ArrayEditor extends React.Component {
       </Paper>
     );
   }
+}
+
+const ArrayToolbar = props => {
+  if (props.size === 0) {
+    return <Toolbar><Typography variant="title">Array</Typography></Toolbar>
+  }
+
+  return <Toolbar className={`${toolbarBackground}`}>
+    <Div display="flex" justifyContent="space-between">
+      <Typography variant="subheading">{ props.size } selected</Typography>
+      <IconButton color="default" aria-label="Delete selected elements" onClick={props.onDeleteAll}>
+        <Delete />
+      </IconButton>
+    </Div>
+  </Toolbar>
+}
+ArrayToolbar.displayName = 'ArrayToolbar'
+ArrayToolbar.propTypes = {
+  size: PropTypes.number.isRequired,
+  onDeleteAll: PropTypes.func.isRequired,
 }
 
 // A tabular editor for editing a single JSON object
