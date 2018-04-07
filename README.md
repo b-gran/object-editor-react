@@ -207,7 +207,7 @@ import { ArrayEditor } from 'object-editor-react';
 | `object` | `any` | The array to edit. <br> Each element must validate according to the `Schema` passed in the `type` prop. | `false` |
 | `onUpdateElement` | `function` | `function onUpdateElement (updatedElement: Object, updatedIndex: Number) -> void` <br> Handler called when an element in the array is updated <br> The updated element and the index are passed | `true` |
 | `onAddElement` | `function` | `function onAddElement (newElement: Object) -> boolean` <br> Handler called when a new element is added to the array <br> If this function returns true, the "add object" row is cleared  | `true` |
-| `onRemoveElement` | `function` | `function onRemoveElement (removedElement: Object, removedIndex: Number) -> void` <br> Handler called when an element in the array is removed <br> The removed element and the index are passed | `true` |
+| `onRemoveElements` | `function` | `function onRemoveElements (removedIndices: [Number]) -> void` <br> Handler called when an element in the array is removed <br> The indices of removed elements are passed | `true` |
 | `className` | `string` | any additional class names for the editor table wrapper | `false` |
 | `icon` | `function` | a function that returns an icon to use for each row in the table | `false` | no icon used |
 

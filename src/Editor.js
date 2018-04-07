@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'classnames';
 import update from 'react-addons-update';
+import * as R from 'ramda'
 
 import { BaseClassnames, PropTypes as Props } from './constants';
 
@@ -55,12 +56,11 @@ export class ArrayEditor extends React.Component {
     // index is the index of updatedElement in the the object prop
     onUpdateElement: PropTypes.func.isRequired,
 
-    // Handler called when one of the elements is removed
+    // Handler called when any elements are removed
     //
-    // function onUpdateElement (removedElement: Object, index: Number) -> void
-    // where removedElement is the element that has been removed, and
-    // index is the index of removedElement in the the object prop
-    onRemoveElement: PropTypes.func.isRequired,
+    // function onRemoveElements (indices: [Number]) -> void
+    // where index is the index of removedElement in the the object prop
+    onRemoveElements: PropTypes.func.isRequired,
 
     // Handler called when a new element is added
     // function onAddElement (newElement: Object) -> void
@@ -77,7 +77,32 @@ export class ArrayEditor extends React.Component {
 
   state = {
     selected: new Map(),
+
     page: 0,
+    rowsPerPage: 10,
+  }
+
+  handleDeleteElements (elementIndices) {
+    const removedByIndex = _.keyBy(elementIndices, index => index)
+    const selectedElements = new Map()
+
+    // Update indices of selected elements
+    let numberRemoved = 0
+    for (let i = 0; i < this.props.object.length; i++) {
+      if (i in removedByIndex) {
+        // Don't select elements that have been removed
+        numberRemoved += 1
+      } else if (this.state.selected.has(i)) {
+        // The new index is shifted by the number that have already been removed
+        selectedElements.set(i - numberRemoved, true)
+      }
+    }
+
+    this.props.onRemoveElements(elementIndices)
+
+    this.setState({
+      selected: selectedElements,
+    })
   }
 
   render () {
@@ -91,6 +116,14 @@ export class ArrayEditor extends React.Component {
       : <Toolbar><Typography variant="title">Array</Typography></Toolbar>
 
     const elementCount = this.props.object ? this.props.object.length : 0
+
+    const visibleElements = this.props.object &&
+      this.props.object.slice(
+        this.state.page * this.state.rowsPerPage,
+        this.state.page * this.state.rowsPerPage + this.state.rowsPerPage,
+      )
+
+    const realIndex = R.add(this.state.page * this.state.rowsPerPage)
 
     return (
       <Paper>
@@ -114,47 +147,42 @@ export class ArrayEditor extends React.Component {
           checked={allElementsSelected}
           indeterminate={!allElementsSelected && this.state.selected.size > 0}
           totalElements={elementCount}
-          rowsPerPage={10}
+          rowsPerPage={this.state.rowsPerPage}
           page={this.state.page}
           onChangePage={(evt, page) => this.setState({ page })}
+          onChangeRowsPerPage={evt => this.setState({ rowsPerPage: evt.target.value })}
         >
 
           {
             _.map(
-              this.props.object,
-              (el, idx) => <ElementRow
-                parentVisible={this.props.parentVisible}
-                key={idx}
-                className={BaseClassnames.ElementRow('--array')}
-                type={this.props.type}
-                object={el}
-                onChange={updated => this.props.onUpdateElement(updated, idx)}
-                onRemove={() => {
-                  const removeElement = cloneMap(this.state.selected)
-                  removeElement.delete(idx)
+              visibleElements,
+              (el, visibleIndex) => {
+                const idx = realIndex(visibleIndex)
+                return <ElementRow
+                  parentVisible={this.props.parentVisible}
+                  key={idx}
+                  className={BaseClassnames.ElementRow('--array')}
+                  type={this.props.type}
+                  object={el}
+                  onChange={updated => this.props.onUpdateElement(updated, idx)}
+                  onRemove={() => this.handleDeleteElements([ idx ])}
+                  isSelected={this.state.selected.has(idx)}
+                  onSelect={() => {
+                    const isSelected = Boolean(this.state.selected.get(idx))
 
-                  this.props.onRemoveElement(el, idx)
+                    const selectElement = cloneMap(this.state.selected)
+                    if (isSelected) {
+                      selectElement.delete(idx)
+                    } else {
+                      selectElement.set(idx, true)
+                    }
 
-                  this.setState({
-                    selected: removeElement,
-                  })
-                }}
-                isSelected={this.state.selected.has(idx)}
-                onSelect={() => {
-                  const isSelected = Boolean(this.state.selected.get(idx))
-
-                  const selectElement = cloneMap(this.state.selected)
-                  if (isSelected) {
-                    selectElement.delete(idx)
-                  } else {
-                    selectElement.set(idx, true)
-                  }
-
-                  return this.setState({
-                    selected: selectElement,
-                  })
-                }}
-              />
+                    return this.setState({
+                      selected: selectElement,
+                    })
+                  }}
+                />
+              }
             )
           }
 
@@ -479,15 +507,18 @@ class ObjectCell extends React.Component {
             return this.props.onChange(el);
           }
         }
-        onRemoveElement={
+        onRemoveElements={
           // Tell the consumer an element was removed
-          (el, droppedIndex) => this.props.onChange(
-            // Without mutating the array, reject the dropped index
-            _.reject(
-              arrayValue,
-              (__, idx) => idx === droppedIndex
+          droppedIndices => {
+            const wasDroppedByIndex = _.keyBy(droppedIndices, index => index)
+            this.props.onChange(
+              // Without mutating the array, reject the dropped index
+              _.reject(
+                arrayValue,
+                (__, idx) => idx in wasDroppedByIndex
+              )
             )
-          )
+          }
         }
         onAddElement={
           (el) => {

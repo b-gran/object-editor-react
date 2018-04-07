@@ -93,11 +93,12 @@ class Wrapper extends React.Component {
     };
 
     // Handler called when an element is removed.
-    remove (removedObject, removedIndex) {
+    remove (removedIndices) {
+      const wasRemovedByIndex = _.keyBy(removedIndices, index => index)
         this.setState({
             object: _.reject(
                 this.state.object,
-                (__, idx) => idx === removedIndex
+                (__, idx) => idx in wasRemovedByIndex
             )
         });
     };
@@ -117,7 +118,7 @@ class Wrapper extends React.Component {
                 type={this.props.type}
                 onUpdateElement={this.change.bind(this)}
                 onAddElement={this.add.bind(this)}
-                onRemoveElement={this.remove.bind(this)} />
+                onRemoveElements={this.remove.bind(this)} />
 
           <pre style={{
             fontFamily: 'monospace',

@@ -121,6 +121,7 @@ export default class BaseTable extends React.Component {
     page: PropTypes.number,
 
     onChangePage: PropTypes.func,
+    onChangeRowsPerPage: PropTypes.func,
   };
 
   // Render the column titles based on a primitive schema type.
@@ -185,6 +186,7 @@ export default class BaseTable extends React.Component {
                 rowsPerPage={this.props.rowsPerPage}
                 page={this.props.page}
                 onChangePage={this.props.onChangePage}
+                onChangeRowsPerPage={this.props.onChangeRowsPerPage}
               />
             </TableRow>
           </TableFooter>
