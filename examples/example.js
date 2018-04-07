@@ -104,34 +104,36 @@ class Wrapper extends React.Component {
     };
 
     render () {
-        // Choose between object and array components based on whether
-        // the object in state is an array.
-        const EditorComponent = Array.isArray(this.state.object)
-            ? ArrayEditor
-            : ObjectEditor;
+      // Choose between object and array components based on whether
+      // the object in state is an array.
+      const EditorComponent = Array.isArray(this.state.object)
+        ? ArrayEditor
+        : ObjectEditor;
 
-        return (
+      return (
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '20px' }}>
-            <EditorComponent
-                className='editor--outside'
-                object={this.state.object}
-                type={this.props.type}
-                onUpdateElement={this.change.bind(this)}
-                onAddElement={this.add.bind(this)}
-                onRemoveElements={this.remove.bind(this)} />
+          <EditorComponent
+            className='editor--outside'
+            object={this.state.object}
+            type={this.props.type}
+            onUpdateElement={this.change.bind(this)}
+            onAddElement={this.add.bind(this)}
+            onRemoveElements={this.remove.bind(this)}/>
 
-          <pre style={{
-            fontFamily: 'monospace',
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
             background: '#f6f6f6',
             padding: '6px',
             boxShadow: '0px 6px 14px 0px #0000003d, 0px 2px 3px 0px #00000040',
             marginLeft: '10px',
             marginTop: 0,
           }}>
-            {JSON.stringify(this.state.object, null, '   ')}
-          </pre>
+            <h4 style={{ margin: '0 0 10px 0' }}>Data</h4>
+            <pre>{JSON.stringify(this.state.object, null, '   ')}</pre>
+          </div>
         </div>
-        );
+      )
     }
 }
 
