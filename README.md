@@ -10,7 +10,7 @@ It enables drop-in, structured editing of deeply nested JSON objects with minima
 
 ![](assets/demo.gif)
 
-Here's how it works:
+## How it works:
 
 1. Create a `Schema` -- it can be as deeply nested as you need.
 ```
