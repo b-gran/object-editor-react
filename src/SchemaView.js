@@ -6,6 +6,8 @@ import React from 'react'
 import { PropTypes as Props } from './constants'
 import PropTypes from 'prop-types'
 
+import { HoverPopover } from './HoverPopover'
+
 import { Div, Span } from 'glamorous'
 
 import * as _ from 'lodash'
@@ -192,4 +194,26 @@ class KeyValueSchemaView extends React.Component {
       </Div>
     )
   }
+}
+
+// A Popover with a SchemaView inside
+export const SchemaPopover = props => {
+  const popoverContent = (
+    <Div padding="15px">
+      <SchemaView schema={props.schema}/>
+    </Div>
+  )
+
+  return (
+    <HoverPopover
+      hoverDurationMs={300}
+      popoverContent={popoverContent}
+      containerStyles={{ display: 'inline-flex' }}>
+      {props.children}
+    </HoverPopover>
+  )
+}
+SchemaPopover.propTypes = {
+  schema: Props.Schema.isRequired,
+  children: PropTypes.node.isRequired,
 }

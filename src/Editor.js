@@ -13,7 +13,7 @@ import Paper from 'material-ui/Paper';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Select from 'material-ui/Select'
-import { Add, Delete, Edit } from 'material-ui-icons'
+import { Add, Delete, Edit, InfoOutline } from 'material-ui-icons'
 import IconButton from 'material-ui/IconButton';
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
@@ -22,7 +22,7 @@ import ReactDOM from 'react-dom'
 window.findDOMNode = ReactDOM.findDOMNode.bind(ReactDOM)
 
 import * as Schema from './Schema';
-import { getSchemaTypeIdentifier } from './SchemaView'
+import { getSchemaTypeIdentifier, SchemaPopover } from './SchemaView'
 
 import { Div } from 'glamorous'
 import * as glamor from 'glamor'
@@ -120,6 +120,7 @@ export class ArrayEditor extends React.Component {
     return (
       <Paper>
         <ArrayToolbar
+          schema={this.props.type}
           onDeleteAll={() => this.handleDeleteElements(Array.from(this.state.selected.keys()))}
           size={this.state.selected.size} />
         <BaseTable
@@ -196,9 +197,25 @@ const toolbarSelected = glamor.css({
   background: '#f5015622',
 })
 
+const BasicToolbar = props => {
+  return <Toolbar className={`${toolbarDefault}`}>
+    <SchemaPopover schema={props.schema}>
+      <Div display="inline-flex" alignItems="center" cursor="default">
+        <Div marginRight="5px"><Typography variant="title">{ props.title }</Typography></Div>
+        <InfoOutline style={{ fontSize: '1em' }}/>
+      </Div>
+    </SchemaPopover>
+  </Toolbar>
+}
+BasicToolbar.displayName = 'BasicToolbar'
+BasicToolbar.propTypes = {
+  schema: Props.Schema.isRequired,
+  title: PropTypes.node.isRequired,
+}
+
 const ArrayToolbar = props => {
   if (props.size === 0) {
-    return <Toolbar className={`${toolbarDefault}`}><Typography variant="title">Array</Typography></Toolbar>
+    return <BasicToolbar schema={props.schema} title="Array" />
   }
 
   return <Toolbar className={`${toolbarDefault} ${toolbarSelected}`}>
@@ -212,6 +229,7 @@ ArrayToolbar.displayName = 'ArrayToolbar'
 ArrayToolbar.propTypes = {
   size: PropTypes.number.isRequired,
   onDeleteAll: PropTypes.func.isRequired,
+  schema: Props.Schema.isRequired,
 }
 
 // A tabular editor for editing a single JSON object
@@ -248,9 +266,7 @@ class ObjectEditor extends React.Component {
 
     return (
       <Paper>
-        <Toolbar>
-          <Typography variant="title">{ editorTitle }</Typography>
-        </Toolbar>
+        <BasicToolbar schema={this.props.type} title={editorTitle} />
         <BaseTable type={this.props.type}
                    className={cx(BaseClassnames.Editor('--object'), this.props.className)}>
           {/* Object is just an individual object, so there's only one row */}

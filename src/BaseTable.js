@@ -9,19 +9,16 @@ import Table, {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
 } from 'material-ui/Table';
 import Checkbox from 'material-ui/Checkbox';
 import { InfoOutline } from 'material-ui-icons'
 
 import { Div } from 'glamorous'
-import * as glamor from 'glamor'
 
 import { BaseClassnames, PropTypes as Props } from './constants';
 
 import * as Schema from './Schema';
-import SchemaView from './SchemaView'
-import { HoverPopover } from './HoverPopover'
+import { SchemaPopover } from './SchemaView'
 
 // Base propTypes for all editor variants
 export const BASE_EDITOR_PROPTYPES = {
@@ -56,6 +53,7 @@ function columnTitle (schemaType) {
   return _.capitalize(schemaType._type);
 }
 
+
 // Returns the column title for the SchemaType `schemaType`.
 // A <th /> Element with a the class ".editor__column-title"
 class ColumnTitle extends React.Component {
@@ -71,28 +69,14 @@ class ColumnTitle extends React.Component {
   }
 
   render () {
-    const classes = cx(
-      BaseClassnames.ColumnTitle(),
-      this.props.className
-    )
-
-    const popoverContent = (
-      <Div padding="15px">
-        <SchemaView schema={this.props.schema}/>
-      </Div>
-    )
-
     return (
-      <TableCell className={classes}>
-        <HoverPopover
-          hoverDurationMs={300}
-          popoverContent={popoverContent}
-          containerStyles={{ display: 'inline-flex' }}>
+      <TableCell>
+        <SchemaPopover schema={this.props.schema}>
           <Div display="inline-flex" cursor="default">
             <Div marginRight="5px">{this.props.children}</Div>
-            <InfoOutline style={infoOutlineFontSize} />
+            <InfoOutline style={infoOutlineFontSize}/>
           </Div>
-        </HoverPopover>
+        </SchemaPopover>
       </TableCell>
     )
   }
