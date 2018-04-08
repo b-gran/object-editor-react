@@ -1,9 +1,13 @@
 const path = require('path')
+const fs = require('fs')
+const child_process = require('child_process')
+
 const clean = require('@neutrinojs/clean');
 const minify = require('@neutrinojs/minify');
 const { optimize } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const R = require('ramda')
+const Future = require('fluture')
 
 const EXAMPLES_DIR = path.resolve(path.join(__dirname, 'examples'))
 const SRC_DIR = path.resolve(path.join(__dirname, 'src'))
@@ -31,11 +35,15 @@ module.exports = {
       include: [ EXAMPLES_DIR ],
     }],
 
-    ['@neutrinojs/react', {
-      html: {
-        title: 'React Object Editor'
-      },
-    }],
+    neutrino => neutrino.use(
+      '@neutrinojs/react',
+      {
+        // Disable HTML template builds for library builds
+        html: !isLibraryBuild(neutrino)
+          ? { title: 'React Object Editor' }
+          : false
+      }
+    ),
 
     '@neutrinojs/jest',
 
@@ -71,6 +79,9 @@ module.exports = {
             () => neutrino.use(clean, options.clean)
           );
 
+          // Remove existing entry points (added by another middleware like web, react)
+          neutrino.config.entryPoints.clear()
+
           // Add the files in "libraryEntries" as webpack entry points.
           Object
             .keys(options.libraryEntries)
@@ -100,5 +111,56 @@ module.exports = {
             })
         })
     },
+
+    // Command for publishing to npm
+    neutrino => {
+      neutrino.register('publish', () => {
+        const isNextRelease = neutrino.options.args.next
+        const packageJson = neutrino.options.packageJson
+        const mainFile = path.resolve(path.join(neutrino.options.output, packageJson.main))
+
+        return Future.node(done => fs.access(mainFile, done))
+          .mapRej(() => {
+            console.log()
+            console.error('No main file in output directory. Please run npm build')
+          })
+
+          // Create package.json for publishing
+          .chain(() => {
+            const trimPackageJson = R.omit([ 'devDependencies', 'scripts' ])()(packageJson)
+            return Future.encase3(JSON.stringify, trimPackageJson, null, ' ')
+          })
+          .chain(packageJsonString => {
+            const publishablePackageJsonPath = path.resolve(path.join(neutrino.options.output, 'package.json'))
+            return Future
+              .node(done => fs.writeFile(publishablePackageJsonPath, packageJsonString, done))
+          })
+
+          // Run publish
+          .chain(() => {
+            console.log()
+            console.log(`Publishing version ${packageJson.version} to npm ${isNextRelease ? '(@next release) ' : ''}...`)
+
+            const command = isNextRelease
+              ? `npm publish --tag next`
+              : `npm publish`
+
+            return Future.node(done =>
+              child_process.exec(
+                command,
+                { cwd: neutrino.options.output },
+                done
+              )
+            )
+          })
+      })
+    }
   ]
 };
+
+function isLibraryBuild (neutrino) {
+  return (
+    neutrino.options.command === 'build' &&
+    neutrino.options.args._.includes('library')
+  )
+}
