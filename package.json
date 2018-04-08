@@ -8,7 +8,8 @@
     "build:examples": "neutrino build",
     "start": "neutrino start",
     "test": "neutrino test",
-    "test:watch": "neutrino test --watch"
+    "test:watch": "neutrino test --watch",
+    "publish": "(cat package.json | jq .version | xargs -I{} echo About to publish version {}. Press any key to continue.) && read && neutrino publish"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
     "async": "^2.6.0",
     "chalk": "^2.3.2",
     "classnames": "^2.2.5",
+    "fluture": "^8.0.2",
     "glamor": "^2.20.40",
     "glamorous": "^4.12.1",
     "lodash": "^4.17.5",
