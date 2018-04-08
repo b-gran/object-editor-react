@@ -29,13 +29,17 @@
     "@neutrinojs/react-components": "^8.1.2",
     "async": "^2.6.0",
     "chalk": "^2.3.2",
+    "classnames": "^2.2.5",
+    "glamor": "^2.20.40",
     "glamorous": "^4.12.1",
+    "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.38",
     "material-ui-icons": "^1.0.0-beta.36",
     "neutrino": "^8.1.2",
     "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
     "react": "^16.2.0",
+    "react-addons-update": "^15.6.2",
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.0.0",
     "rollup": "^0.57.1",
@@ -43,10 +47,5 @@
     "webpack": "^3.11.0",
     "webpack-node-externals": "latest"
   },
-  "dependencies": {
-    "classnames": "^2.2.5",
-    "glamor": "^2.20.40",
-    "lodash": "^4.17.5",
-    "react-addons-update": "^15.6.2"
-  }
+  "dependencies": {}
 }
