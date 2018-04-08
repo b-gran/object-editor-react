@@ -118,6 +118,7 @@ module.exports = {
         const isNextRelease = neutrino.options.args.next
         const packageJson = neutrino.options.packageJson
         const mainFile = path.resolve(path.join(neutrino.options.output, packageJson.main))
+        const readme = path.join(__dirname, 'README.md')
 
         return Future.node(done => fs.access(mainFile, done))
           .mapRej(() => {
@@ -134,6 +135,20 @@ module.exports = {
             const publishablePackageJsonPath = path.resolve(path.join(neutrino.options.output, 'package.json'))
             return Future
               .node(done => fs.writeFile(publishablePackageJsonPath, packageJsonString, done))
+          })
+
+          // Copy README to build & substitute assets
+          .chain(() => Future.node(done => fs.readFile(readme, done)))
+          .chain(readmeContents => {
+            const substituteAssets = readmeContents.toString().replace(
+              /\(assets\/([\w\-_.]+)\)/,
+              '(https://github.com/b-gran/object-editor-react/raw/master/assets/$1)'
+            )
+            return Future.node(done => fs.writeFile(
+              path.resolve(path.join(neutrino.options.output, 'README.md')),
+              substituteAssets,
+              done
+            ))
           })
 
           // Run publish
