@@ -8,7 +8,7 @@
 * ⚛️ Schema aware: create nested objects and array elements in real time
 * 🏗 Bulk operations for working with larger objects
 
-## [Demo/example](https://b-gran.github.io/object-editor-react/githubExample.html)
+## [Demo/example](https://b-gran.github.io/object-editor-react/githubExample.html) <sup><a href="https://github.com/b-gran/object-editor-react/blob/master/examples/github-example.js">(source)</a></sup>
 
 ## Preview
 
