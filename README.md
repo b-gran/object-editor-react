@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/b-gran/object-editor-react.svg?branch=master)](https://travis-ci.org/b-gran/object-editor-react) [![npm version](https://badge.fury.io/js/object-editor-react.svg)](https://badge.fury.io/js/object-editor-react) [![GitHub stars](https://img.shields.io/github/stars/b-gran/object-editor-react.svg?style=social&label=Stars)](https://github.com/b-gran/object-editor-react)
 
-`object-editor-react` is a visual editor for structured JSON data.
+`object-editor-react` is a visual editor for structured JSON data, available as a simple drop-in React component.
 
 * 🔌 Drop-in, structured editing of deeply nested JSON objects
 * ⚛️ Schema aware: create nested objects and array elements in real time
