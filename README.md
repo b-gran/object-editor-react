@@ -6,6 +6,8 @@
 
 It enables drop-in, structured editing of deeply nested JSON objects with minimal configuration.
 
+## [Demo/example](https://b-gran.github.io/object-editor-react/githubExample.html)
+
 ## Preview
 
 ![](assets/demo.gif)
