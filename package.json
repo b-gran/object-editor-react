@@ -9,7 +9,8 @@
     "start": "neutrino start",
     "test": "neutrino test",
     "test:watch": "neutrino test --watch",
-    "publish": "(cat package.json | jq .version | xargs -I{} echo About to publish version {}. Press any key to continue.) && read && neutrino publish"
+    "publish": "(cat package.json | jq .version | xargs -I{} echo About to publish version {}. Press any key to continue.) && read && neutrino publish",
+    "publish:pages": "git subtree push --prefix gh-pages origin gh-pages"
   },
   "repository": {
     "type": "git",
