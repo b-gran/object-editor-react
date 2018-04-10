@@ -79,8 +79,23 @@ export const cloneMap = map => {
 }
 
 /* *********************************** *
+ * ***********    ARRAYS   *********** *
+ * *********************************** */
+
+// keyBy :: (a -> b) -> [a] -> Object b a
+export const keyBy = R.curryN(2, R.converge(
+  R.zipObj,
+  [
+    R.map,
+    R.nthArg(1),
+  ]
+))
+
+/* *********************************** *
  * ***********    STRING   *********** *
  * *********************************** */
+
+export const parseDecimalInt = n => parseInt(n, 10)
 
 export const capitalize = str => {
   if (!str) {
