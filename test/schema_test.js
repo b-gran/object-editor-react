@@ -3,7 +3,7 @@
  */
 
 import * as Schema from '../src/Schema';
-import _ from 'lodash';
+import * as R from 'ramda'
 
 describe('support functions', () => {
     describe('isValidDate()', () => {
@@ -98,7 +98,8 @@ describe('support functions', () => {
                 null,
             ];
 
-            expect(_.every(nonObjects, _.negate(Schema.isObject))).toBeTruthy();
+            const containsNoObjects = nonObjects.every(R.complement(Schema.isObject))
+            expect(containsNoObjects).toBeTruthy()
 
             done();
         })

@@ -10,7 +10,7 @@ import { HoverPopover } from './HoverPopover'
 
 import { Div, Span } from 'glamorous'
 
-import * as _ from 'lodash'
+import * as R from 'ramda'
 
 const SCHEMA_TYPE_IDENTIFIER = {
   // "nested" schema types
@@ -132,7 +132,7 @@ class ShapeSchema extends React.Component {
   render () {
     return <div>
       {
-        _.toPairs(this.props.schema).map(([ key, schema ]) =>
+        R.toPairs(this.props.schema).map(([ key, schema ]) =>
           <SchemaView key={key} schema={schema} keyName={key} />
         )
       }

@@ -3,6 +3,7 @@ import React from 'react';
 import cx from 'classnames';
 import update from 'react-addons-update';
 import * as R from 'ramda'
+import * as util from './util'
 
 import { BaseClassnames, PropTypes as Props } from './constants';
 
@@ -27,7 +28,6 @@ import { getSchemaTypeIdentifier, SchemaPopover } from './SchemaView'
 import { Div } from 'glamorous'
 import * as glamor from 'glamor'
 
-import _ from 'lodash';
 import Pin from './Pin'
 import { capitalize, cloneMap } from './util'
 
@@ -79,7 +79,7 @@ export class ArrayEditor extends React.Component {
   }
 
   handleDeleteElements (elementIndices) {
-    const removedByIndex = _.keyBy(elementIndices, index => index)
+    const removedByIndex = util.keyBy(R.identity, elementIndices)
     const selectedElements = new Map()
 
     // Update indices of selected elements
@@ -109,11 +109,12 @@ export class ArrayEditor extends React.Component {
 
     const elementCount = this.props.object ? this.props.object.length : 0
 
-    const visibleElements = this.props.object &&
+    const visibleElements = this.props.object ?
       this.props.object.slice(
         this.state.page * this.state.rowsPerPage,
         this.state.page * this.state.rowsPerPage + this.state.rowsPerPage,
-      )
+      ) :
+      []
 
     const realIndex = R.add(this.state.page * this.state.rowsPerPage)
 
@@ -149,36 +150,33 @@ export class ArrayEditor extends React.Component {
         >
 
           {
-            _.map(
-              visibleElements,
-              (el, visibleIndex) => {
-                const idx = realIndex(visibleIndex)
-                return <ElementRow
-                  parentVisible={this.props.parentVisible}
-                  key={idx}
-                  className={BaseClassnames.ElementRow('--array')}
-                  type={this.props.type}
-                  object={el}
-                  onChange={updated => this.props.onUpdateElement(updated, idx)}
-                  onRemove={() => this.handleDeleteElements([ idx ])}
-                  isSelected={this.state.selected.has(idx)}
-                  onSelect={() => {
-                    const isSelected = Boolean(this.state.selected.get(idx))
+            visibleElements.map((el, visibleIndex) => {
+              const idx = realIndex(visibleIndex)
+              return <ElementRow
+                parentVisible={this.props.parentVisible}
+                key={idx}
+                className={BaseClassnames.ElementRow('--array')}
+                type={this.props.type}
+                object={el}
+                onChange={updated => this.props.onUpdateElement(updated, idx)}
+                onRemove={() => this.handleDeleteElements([idx])}
+                isSelected={this.state.selected.has(idx)}
+                onSelect={() => {
+                  const isSelected = Boolean(this.state.selected.get(idx))
 
-                    const selectElement = cloneMap(this.state.selected)
-                    if (isSelected) {
-                      selectElement.delete(idx)
-                    } else {
-                      selectElement.set(idx, true)
-                    }
+                  const selectElement = cloneMap(this.state.selected)
+                  if (isSelected) {
+                    selectElement.delete(idx)
+                  } else {
+                    selectElement.set(idx, true)
+                  }
 
-                    return this.setState({
-                      selected: selectElement,
-                    })
-                  }}
-                />
-              }
-            )
+                  return this.setState({
+                    selected: selectElement,
+                  })
+                }}
+              />
+            })
           }
 
           <AddObjectRow
@@ -545,12 +543,12 @@ class ObjectCell extends React.Component {
         onRemoveElements={
           // Tell the consumer an element was removed
           droppedIndices => {
-            const wasDroppedByIndex = _.keyBy(droppedIndices, index => index)
+            const wasDroppedByIndex = util.keyBy(R.identity, droppedIndices)
             this.props.onChange(
               // Without mutating the array, reject the dropped index
-              _.reject(
-                arrayValue,
-                (__, idx) => idx in wasDroppedByIndex
+              R.addIndex(R.reject)(
+                (__, idx) => idx in wasDroppedByIndex,
+                arrayValue
               )
             )
           }
@@ -668,8 +666,7 @@ const ElementRow = props => {
     }
 
     // Object case
-    return _.map(
-      Object.keys(props.type),
+    return R.map(
       key => {
         const value = props.object
           ? props.object[key]
@@ -681,7 +678,8 @@ const ElementRow = props => {
           getChangeHandler(key),
           key,
         );
-      }
+      },
+      Object.keys(props.type)
     );
   };
 

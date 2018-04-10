@@ -16,6 +16,7 @@ import { InfoOutline } from 'material-ui-icons'
 import { Div } from 'glamorous'
 
 import { BaseClassnames, PropTypes as Props } from './constants';
+import * as util from './util'
 
 import * as Schema from './Schema';
 import { SchemaPopover } from './SchemaView'
@@ -50,7 +51,7 @@ function columnTitle (schemaType) {
   }
 
   // Otherwise, just use the _type field.
-  return _.capitalize(schemaType._type);
+  return util.capitalize(schemaType._type);
 }
 
 

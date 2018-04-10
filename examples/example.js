@@ -7,11 +7,11 @@ import { ObjectEditor, ArrayEditor } from '../src/Editor';
 import { PropTypes as Props } from '../src/constants'
 
 import update from 'react-addons-update';
-import _ from 'lodash';
 import * as R from 'ramda'
 
 import './main.css'
 import SchemaView from '../src/SchemaView'
+import * as util from '../src/util'
 
 const APP_ROOT = document.getElementById('root')
 
@@ -94,13 +94,13 @@ class Wrapper extends React.Component {
 
     // Handler called when an element is removed.
     remove (removedIndices) {
-      const wasRemovedByIndex = _.keyBy(removedIndices, index => index)
-        this.setState({
-            object: _.reject(
-                this.state.object,
-                (__, idx) => idx in wasRemovedByIndex
-            )
-        });
+      const wasRemovedByIndex = util.keyBy(R.identity, removedIndices)
+      this.setState({
+          object: R.addIndex(R.reject)(
+              (__, idx) => idx in wasRemovedByIndex,
+              this.state.object
+          )
+      });
     };
 
     render () {
