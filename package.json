@@ -37,7 +37,9 @@
     "rollup": "^0.57.1",
     "rollup-plugin-babel": "^3.0.3",
     "webpack": "^3.11.0",
-    "webpack-node-externals": "latest"
+    "webpack-bundle-analyzer": "^2.11.2",
+    "webpack-node-externals": "latest",
+    "webpack-stats-plugin": "^0.2.1"
   },
   "dependencies": {
     "classnames": "^2.2.5",
