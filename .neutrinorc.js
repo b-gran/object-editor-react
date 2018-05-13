@@ -6,6 +6,7 @@ const clean = require('@neutrinojs/clean');
 const minify = require('@neutrinojs/minify');
 const { optimize } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin
 const R = require('ramda')
 const Future = require('fluture')
 
@@ -87,6 +88,7 @@ module.exports = {
             .keys(options.libraryEntries)
             .forEach(key => neutrino.config.entry(key).add(options.libraryEntries[key]))
 
+
           // Set up the actual library build
           neutrino.config
             .devtool('source-map')
@@ -108,6 +110,22 @@ module.exports = {
               config
                 .plugin('module-concat')
                 .use(optimize.ModuleConcatenationPlugin);
+            })
+
+            // Print bundle size info in debug mode
+            .when(neutrino.options.debug, config => {
+              config.merge({
+                stats: {
+                  maxModules: Infinity,
+                  optimizationBailout: true,
+                }
+              })
+
+              config.plugin('stats-plugin')
+                .use(StatsWriterPlugin, [{
+                  filename: 'stats.json',
+                  fields: null,
+                }])
             })
         })
     },
