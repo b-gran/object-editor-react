@@ -14,7 +14,10 @@ import Paper from 'material-ui/Paper';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/Button';
 import Select from 'material-ui/Select'
-import { Add, Delete, Edit, InfoOutline } from 'material-ui-icons'
+import Add from '@material-ui/icons/Add'
+import Delete from '@material-ui/icons/Delete'
+import Edit from '@material-ui/icons/Edit'
+import InfoOutline from '@material-ui/icons/InfoOutline'
 import IconButton from 'material-ui/IconButton';
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'

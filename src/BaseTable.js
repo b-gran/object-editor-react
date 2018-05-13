@@ -11,7 +11,7 @@ import Table, {
   TableRow,
 } from 'material-ui/Table';
 import Checkbox from 'material-ui/Checkbox';
-import { InfoOutline } from 'material-ui-icons'
+import InfoOutline from '@material-ui/icons/InfoOutline'
 
 import { Div } from 'glamorous'
 
