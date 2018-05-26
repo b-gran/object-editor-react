@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import { ModalManager } from 'material-ui/Modal'
+import ModalManager from '@material-ui/core/Modal/ModalManager'
 
 // Return true if the argument is non-nil
 export const isDefined = R.complement(R.isNil)

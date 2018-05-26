@@ -7,18 +7,19 @@ import * as util from './util'
 
 import { BaseClassnames, PropTypes as Props } from './constants';
 
-import { TableCell, TableRow } from 'material-ui/Table';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import Paper from 'material-ui/Paper';
-import Checkbox from 'material-ui/Checkbox';
-import Button from 'material-ui/Button';
-import Select from 'material-ui/Select'
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
+import Select from '@material-ui/core/Select'
 import Add from '@material-ui/icons/Add'
 import Delete from '@material-ui/icons/Delete'
 import Edit from '@material-ui/icons/Edit'
 import InfoOutline from '@material-ui/icons/InfoOutline'
-import IconButton from 'material-ui/IconButton';
+import IconButton from '@material-ui/core/IconButton';
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
 
