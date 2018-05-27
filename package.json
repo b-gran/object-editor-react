@@ -1,6 +1,6 @@
 {
   "name": "object-editor-react",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A React-based JSON object editor",
   "main": "index.js",
   "scripts": {
@@ -42,11 +42,11 @@
     "webpack-stats-plugin": "^0.2.1"
   },
   "dependencies": {
-    "@material-ui/icons": "^1.0.0-beta.43",
+    "@material-ui/core": "^1.0.0",
+    "@material-ui/icons": "^1.0.0",
     "classnames": "^2.2.5",
     "glamor": "^2.20.40",
     "glamorous": "^4.12.1",
-    "material-ui": "^1.0.0-beta.41",
     "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
     "react-addons-update": "^15.6.2"
