@@ -220,3 +220,33 @@ import { ArrayEditor } from 'object-editor-react';
 ## Examples
 
 See `examples/example.js` for a stateful implementation with a deeply nested `Schema`.
+
+## Contributing
+
+### 1 Obtain the source and install dependencies
+
+```
+$ git clone https://github.com/b-gran/object-editor-react.git
+$ cd object-editor-react
+$ npm install
+```
+
+### 2 Starting the development server
+
+```
+$ npm start
+✔ Development server running on: http://localhost:5000
+✔ Build completed
+```
+
+There are two development examples hosted on the dev server:
+1. http://localhost:5000/mainExample.html contains schemas with all root value types
+2. http://localhost:5000/githubExample.html is the example hosted on GitHub
+
+### 3 Running the tests
+
+```
+$ npm run test
+```
+
+
