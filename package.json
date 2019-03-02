@@ -29,7 +29,7 @@
     "@neutrinojs/minify": "8.3.0",
     "@neutrinojs/react": "8.3.0",
     "@neutrinojs/react-components": "8.3.0",
-    "fluture": "8.0.2",
+    "fluture": "10.3.1",
     "neutrino": "8.3.0",
     "react": "16.8.3",
     "react-dom": "16.8.3",
