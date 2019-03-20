@@ -24,7 +24,6 @@ import IconButton from '@material-ui/core/IconButton';
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
 
 import ReactDOM from 'react-dom'
-window.findDOMNode = ReactDOM.findDOMNode.bind(ReactDOM)
 
 import * as Schema from './Schema';
 import { getSchemaTypeIdentifier, SchemaPopover } from './SchemaView'

@@ -12,9 +12,11 @@ import PropTypes from 'prop-types'
 const lastMousePosition = (() => {
   let latest = null
 
-  eventOnce('load', () => {
-    window.addEventListener('mousemove', evt => (latest = evt.target))
-  })(window)
+  if (typeof window !== 'undefined') {
+    eventOnce('load', () => {
+      window.addEventListener('mousemove', evt => (latest = evt.target))
+    })(window)
+  }
 
   return () => latest
 })()
