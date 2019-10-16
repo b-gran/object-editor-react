@@ -31,8 +31,8 @@
     "@neutrinojs/react-components": "8.3.0",
     "fluture": "11.0.0",
     "neutrino": "8.3.0",
-    "react": "16.8.3",
-    "react-dom": "16.8.3",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
     "react-hot-loader": "4.7.1",
     "webpack": "3.12.0",
     "webpack-bundle-analyzer": "3.1.0",
@@ -40,8 +40,8 @@
     "webpack-stats-plugin": "0.2.1"
   },
   "dependencies": {
-    "@material-ui/core": "^3.0.0",
-    "@material-ui/icons": "^3.0.0",
+    "@material-ui/core": "^4.5.1",
+    "@material-ui/icons": "^4.5.1",
     "classnames": "^2.2.5",
     "glamor": "^2.20.40",
     "glamorous": "^4.12.1",
