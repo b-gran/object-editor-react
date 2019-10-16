@@ -18,7 +18,7 @@ import Select from '@material-ui/core/Select'
 import Add from '@material-ui/icons/Add'
 import Delete from '@material-ui/icons/Delete'
 import Edit from '@material-ui/icons/Edit'
-import InfoOutline from '@material-ui/icons/InfoOutline'
+import HelpOutline from '@material-ui/icons/HelpOutline'
 import IconButton from '@material-ui/core/IconButton';
 
 import BaseTable, { BASE_EDITOR_PROPTYPES } from './BaseTable'
@@ -203,7 +203,7 @@ const BasicToolbar = props => {
     <SchemaPopover schema={props.schema}>
       <Div display="inline-flex" alignItems="center" cursor="default">
         <Div marginRight="5px"><Typography variant="title">{ props.title }</Typography></Div>
-        <InfoOutline style={{ fontSize: '1em' }}/>
+        <HelpOutline style={{ fontSize: '1em' }}/>
       </Div>
     </SchemaPopover>
   </Toolbar>
