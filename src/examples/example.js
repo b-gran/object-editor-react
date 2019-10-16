@@ -2,16 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { render } from 'react-dom';
 
-import * as Schema from '../src/Schema';
-import { ObjectEditor, ArrayEditor } from '../src/Editor';
-import { PropTypes as Props } from '../src/constants'
+import * as Schema from '../Schema';
+import { ObjectEditor, ArrayEditor } from '../Editor';
+import { PropTypes as Props } from '../constants'
 
 import update from 'react-addons-update';
 import * as R from 'ramda'
 
 import './main.css'
-import SchemaView from '../src/SchemaView'
-import * as util from '../src/util'
+import SchemaView from '../SchemaView'
+import * as util from '../util'
 
 const APP_ROOT = document.getElementById('root')
 

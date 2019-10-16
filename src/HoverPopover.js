@@ -5,6 +5,7 @@ import * as glamor from 'glamor'
 import { Div } from 'glamorous'
 
 import Popover from '@material-ui/core/Popover'
+import * as R from 'ramda'
 
 import PropTypes from 'prop-types'
 
