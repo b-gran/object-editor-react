@@ -385,12 +385,11 @@ class StringCell extends React.Component {
 
     return (
       <TableCell className={BaseClassnames.Cell('--value')}>
-        <input
+        <textarea
           className={inputClasses}
-          type='text'
           value={this.props.value || ''}
           required={this.props.type.required}
-          onChange={evt => this.props.onChange(evt.target.value)}/>
+          onChange={evt => this.props.onChange(evt.target.value)}></textarea>
       </TableCell>
     );
   }
