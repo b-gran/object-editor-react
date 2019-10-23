@@ -2,7 +2,7 @@
   "name": "object-editor-react",
   "version": "1.0.6",
   "description": "A React-based JSON object editor",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "neutrino build library",
     "build:examples": "neutrino build",
