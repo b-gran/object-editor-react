@@ -1,6 +1,6 @@
 {
   "name": "object-editor-react",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "A React-based JSON object editor",
   "main": "index.js",
   "scripts": {
