@@ -11,7 +11,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 import Checkbox from '@material-ui/core/Checkbox';
-import HelpOutline from '@material-ui/icons/HelpOutline'
+import InfoOutlined from '@material-ui/icons/InfoOutlined'
 
 import { Div } from 'glamorous'
 
@@ -75,7 +75,7 @@ class ColumnTitle extends React.Component {
         <SchemaPopover schema={this.props.schema}>
           <Div display="inline-flex" cursor="default">
             <Div marginRight="5px">{this.props.children}</Div>
-            <HelpOutline style={infoOutlineFontSize}/>
+            <InfoOutlined style={infoOutlineFontSize}/>
           </Div>
         </SchemaPopover>
       </TableCell>
