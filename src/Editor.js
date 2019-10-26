@@ -66,17 +66,21 @@ export class ArrayEditor extends React.Component {
 
     // Optimize performance by only creating DOM if the parent is visible
     parentVisible: PropTypes.bool,
+
+    // Default number of rows per page.
+    defaultRowsPerPage: PropTypes.number,
   };
 
   static defaultProps = {
     className: '',
+    defaultRowsPerPage: 5,
   };
 
   state = {
     selected: new Map(),
 
     page: 0,
-    rowsPerPage: 5,
+    rowsPerPage: this.props.defaultRowsPerPage,
   }
 
   handleDeleteElements (elementIndices) {

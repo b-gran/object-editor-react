@@ -113,6 +113,7 @@ class Wrapper extends React.Component {
       return (
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '20px' }}>
           <EditorComponent
+            defaultRowsPerPage={30}
             className='editor--outside'
             object={this.state.object}
             type={this.props.type}
