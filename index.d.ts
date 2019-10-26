@@ -57,6 +57,7 @@ export class ArrayEditor <TObject extends Editable> extends
     onRemoveElements: (indices: Array<Number>) => void,
     onAddElement: (object: TObject) => void,
     parentVisible?: boolean,
+    defaultRowsPerPage?: number,
   }> {}
 
 export const PropTypes: {
