@@ -7,7 +7,8 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "publish": "(cat package.json | jq .version | xargs -I{} echo About to publish version {}. Press any key to continue.) && read && neutrino publish",
+    "publish": "(cat package.json | jq .version | xargs -I{} echo About to publish version {}. Press any key to continue.) && read && (cd build && npm publish --tag next)",
+    "publish:prod": "(cat package.json | jq .version | xargs -I{} echo About to publish version {}. Press any key to continue.) && read && (cd build && npm publish)",
     "publish:pages": "git subtree push --prefix gh-pages origin gh-pages"
   },
   "repository": {
