@@ -4,18 +4,27 @@ type IsRequiredOption = {
   required?: boolean,
 }
 
+type RenderFunction = (
+  type: SchemaType,
+  value: string | number | boolean,
+  onChange: (value: string | number | boolean) => void
+) => React.ReactNode
+type RenderFunctionOption = {
+  render?: RenderFunction,
+}
+
 type BaseSchemaType<TOptions> = ((x: unknown) => boolean)
   & { _isSchemaType: true, _type: string, } & TOptions
 type SchemaTypeFactory<TOptions> = (options?: TOptions) => BaseSchemaType<TOptions>
 
-type StringSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption>
-type StringSchemaType = BaseSchemaType<IsRequiredOption>
+type StringSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption & RenderFunctionOption>
+type StringSchemaType = BaseSchemaType<IsRequiredOption & RenderFunctionOption>
 
-type BooleanSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption>
-type BooleanSchemaType = BaseSchemaType<IsRequiredOption>
+type BooleanSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption & RenderFunctionOption>
+type BooleanSchemaType = BaseSchemaType<IsRequiredOption & RenderFunctionOption>
 
-type NumberSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption>
-type NumberSchemaType = BaseSchemaType<IsRequiredOption>
+type NumberSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption & RenderFunctionOption>
+type NumberSchemaType = BaseSchemaType<IsRequiredOption & RenderFunctionOption>
 
 type FunctionSchemaTypeFactory = SchemaTypeFactory<IsRequiredOption>
 type FunctionSchemaType = BaseSchemaType<IsRequiredOption>
