@@ -17,7 +17,13 @@ const APP_ROOT = document.getElementById('root')
 
 // A deeply nested test schema
 const schema = {
-    foo: Schema.SchemaTypes.string({ required: true }),
+    foo: Schema.SchemaTypes.string({
+      required: true,
+      render: (type, value, onChange) => <textarea
+        value={value || ''}
+        required={type.required}
+        onChange={evt => onChange(evt.target.value)}/>
+    }),
 
     bar: Schema.SchemaTypes.number(),
 

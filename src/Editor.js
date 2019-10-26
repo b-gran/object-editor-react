@@ -385,14 +385,17 @@ class StringCell extends React.Component {
       BaseClassnames.EditorInput('--value')
     );
 
+    const cellContent = typeof this.props.type.render === 'function'
+      ? this.props.type.render(this.props.type, this.props.value, this.props.onChange)
+      : <input
+        className={inputClasses}
+        value={this.props.value || ''}
+        required={this.props.type.required}
+        onChange={evt => this.props.onChange(evt.target.value)}/>
+
     return (
       <TableCell className={BaseClassnames.Cell('--value')}>
-        <input
-          className={inputClasses}
-          type='text'
-          value={this.props.value || ''}
-          required={this.props.type.required}
-          onChange={evt => this.props.onChange(evt.target.value)}/>
+        {cellContent}
       </TableCell>
     );
   }
@@ -421,15 +424,19 @@ class BooleanCell extends React.Component {
   };
 
   render () {
+    const cellContent = typeof this.props.type.render === 'function'
+      ? this.props.type.render(this.props.type, this.props.value, this.props.onChange)
+      : <Select
+        native
+        value={String(Boolean(this.props.value))}
+        onChange={evt => this.props.onChange(stringToBoolean(evt.target.value))}>
+        <option value={true}>True</option>
+        <option value={false}>False</option>
+      </Select>
+
     return (
       <TableCell className={BaseClassnames.Cell('--value')}>
-        <Select
-          native
-          value={String(Boolean(this.props.value))}
-          onChange={evt => this.props.onChange(stringToBoolean(evt.target.value))}>
-          <option value={true}>True</option>
-          <option value={false}>False</option>
-        </Select>
+        { cellContent }
       </TableCell>
     );
   }
