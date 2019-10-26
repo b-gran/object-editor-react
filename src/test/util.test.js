@@ -1,4 +1,4 @@
-import * as util from '../src/util'
+import * as util from '../util'
 import * as R from 'ramda'
 
 describe('parseDecimalInt', () => {

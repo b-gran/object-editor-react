@@ -2,7 +2,7 @@
  * Test Schemas and SchemaTypes.
  */
 
-import * as Schema from '../src/Schema';
+import * as Schema from '../Schema';
 import * as R from 'ramda'
 
 describe('support functions', () => {
