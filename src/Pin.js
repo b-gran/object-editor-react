@@ -314,10 +314,3 @@ Pin.propTypes = {
 }
 
 export default Pin
-
-// Do some operation after the next reflow.
-function waitForReflow (cb) {
-  return requestAnimationFrame(
-    () => setTimeout(cb, 0)
-  )
-}
