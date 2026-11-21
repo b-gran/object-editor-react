@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/b-gran/object-editor-react#readme",
   "dependencies": {
-    "@material-ui/core": "^4.5.1",
+    "@mui/material": "^5.0.0",
     "@material-ui/icons": "^4.5.1",
     "classnames": "^2.2.5",
     "glamor": "^2.20.40",
